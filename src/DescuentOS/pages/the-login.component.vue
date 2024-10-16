@@ -22,8 +22,8 @@
         </div>
 
         <div class="button-group">
-          <button type="submit" class="btn">Ingresar</button>
-          <button type="button" class="btn btn-secondary">Registrarse</button>
+          <pv-button type="submit" @click="handleLogin" class="btn">Ingresar</pv-button>
+          <pv-button type="button"  @click="goToRegister" class="btn btn-secondary">Registrarse</pv-button>
         </div>
       </div>
     </div>
@@ -32,6 +32,7 @@
 
 <script>
 export default {
+  name: 'the-login.component',
   data() {
     return {
       username: '',
@@ -39,8 +40,13 @@ export default {
     };
   },
   methods: {
-    handleSubmit() {
+    handleLogin() {
+      this.$router.push('/dashboard');
+    },
+    goToRegister(){
+      this.$router.push('/register');
     }
+
   }
 };
 </script>

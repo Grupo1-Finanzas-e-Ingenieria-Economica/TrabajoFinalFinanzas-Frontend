@@ -9,23 +9,23 @@
         <form @submit.prevent="registrarUsuario">
           <div class="form-group">
             <label for="nombre">Nombre de usuario</label>
-            <input type="text" id="nombre" v-model="usuario.nombre" required />
+            <pv-input-text type="text" id="nombre" v-model="usuario.nombre" required />
           </div>
           <div class="form-group">
             <label for="correo">Correo electrónico</label>
-            <input type="email" id="correo" v-model="usuario.correo" required />
+            <pv-input-text type="email" id="correo" v-model="usuario.correo" required />
           </div>
           <div class="form-group">
             <label for="password">Contraseña</label>
-            <input type="password" id="password" v-model="usuario.password" required />
+            <pv-input-text type="password" id="password" v-model="usuario.password" required />
           </div>
           <div class="form-group">
             <label for="confirmPassword">Confirmar contraseña</label>
-            <input type="password" id="confirmPassword" v-model="usuario.confirmPassword" required />
+            <pv-input-text type="password" id="confirmPassword" v-model="usuario.confirmPassword" required />
           </div>
-          <button type="submit" class="btn">Registrarse</button>
+          <pv-button type="submit" class="btn">Registrarse</pv-button>
         </form>
-        <button @click="goToLogin" class="btn-link">¿Ya tienes una cuenta? Inicia sesión</button>
+        <pv-button @click="goToLogin" class="btn-link">¿Ya tienes una cuenta? Inicia sesión</pv-button>
       </div>
     </div>
   </div>
@@ -33,6 +33,7 @@
 
 <script>
 export default {
+  name: 'the-register.component',
   data() {
     return {
       usuario: {
