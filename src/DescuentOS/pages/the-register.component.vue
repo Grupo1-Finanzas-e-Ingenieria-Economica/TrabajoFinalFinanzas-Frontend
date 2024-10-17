@@ -45,33 +45,7 @@ export default {
     };
   },
   methods: {
-    registrarUsuario() {
-
-      if (this.usuario.password !== this.usuario.confirmPassword) {
-        alert('Las contraseñas no coinciden');
-        return;
-      }
-      fetch('http://localhost:8080/user/InsertarUsuario', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          nombre: this.usuario.nombre,
-          correo: this.usuario.correo,
-          password: this.usuario.password,
-        }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log('Usuario registrado:', data);
-          alert('Registro exitoso');
-          this.$router.push('/login');
-        })
-        .catch((error) => {
-          console.error('Error al registrar el usuario:', error);
-        });
-    },
+    registrarUsuario() {},
     goToLogin() {
       this.$router.push('/login');
     },

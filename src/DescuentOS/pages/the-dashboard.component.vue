@@ -37,13 +37,13 @@ export default {
       this.$router.push('/bill-management');
     },
     goToClientesDeudores() {
-      this.$router.push('/clientes-deudores');
+      this.$router.push('/clients-management');
     },
     goToProveedores() {
       this.$router.push('/proveedores');
     },
-    goToOperacionesFactoring() {
-      this.$router.push('/operaciones-factoring');
+    goToOperaciones() {
+      this.$router.push('/operations');
     },
 
   },
@@ -84,12 +84,12 @@ export default {
         </template>
       </pv-card>
 
-      <pv-card class="card" @click="goToOperacionesFactoring">
+      <pv-card class="card" @click="goToOperaciones">
         <template #title>
-          <h2>Operaciones de Factoring</h2>
+          <h2>Operaciones</h2>
         </template>
         <template #content>
-          <p>Visualiza y gestiona tus operaciones de factoring.</p>
+          <p>Visualiza y gestiona tus operaciones.</p>
         </template>
       </pv-card>
     </div>
@@ -105,22 +105,6 @@ export default {
         <pv-column field="fechaVencimiento" header="Fecha de Vencimiento"></pv-column>
         <pv-column field="clienteProveedor" header="Cliente Proveedor"></pv-column>
       </pv-data-table>
-
-      <!--<table>
-        <thead>
-        <tr>
-          <th>#</th>
-          <th>Número</th>
-          <th>Monto Total</th>
-          <th>Moneda</th>
-          <th>Fecha de Emisión</th>
-          <th>Fecha de Vencimiento</th>
-          <th>Cliente Proveedor</th>
-        </tr>
-        </thead>
-        <tbody>
-        </tbody>
-      </table>-->
     </div>
   </div>
 </template>

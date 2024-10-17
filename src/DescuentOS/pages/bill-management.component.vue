@@ -32,35 +32,16 @@ export default {
     };
   },
   methods: {
-    // Función para redirigir a la página de registro de una nueva factura
     registrarNuevaFactura() {
-      //this.$router.push('/facturas/registrar');
+      this.$router.push('/register-bill');
     },
 
-    // Función para redirigir a la pantalla de edición de una factura
     editarFactura(id) {
       console.log("Id: ", id);
-      //this.$router.push(`/facturas/editar/${id}`);
     },
 
-    // Función para eliminar una factura
     eliminarFactura(id) {
-      if (confirm('¿Estás seguro de que deseas eliminar esta factura?')) {
-        fetch(`http://localhost:8080/factura/eliminar/${id}`, {
-          method: 'DELETE',
-        })
-          .then((response) => {
-            if (response.ok) {
-              alert('Factura eliminada exitosamente');
-              this.listarFacturas(); // Refrescar la lista de facturas
-            } else {
-              alert('Error al eliminar la factura');
-            }
-          })
-          .catch((error) => {
-            console.error('Error al eliminar la factura:', error);
-          });
-      }
+      console.log(id)
     },
   },
   mounted() {
