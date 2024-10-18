@@ -1,0 +1,40 @@
+{
+  "usuario_cliente_proveedor": [
+    {
+      "id": 1,
+      "documento_identidad": "749285739",
+      "Nombre": "Juan Emilio",
+      "Apellido": "Perez Quispe",
+      "email": "juan.perez@gmail.com",
+      "usuario": "Juan Quispe",
+      "contrasena": "123456",
+      "rol": "cliente"
+    }
+  ],
+  "cliente_proveedor": [
+    {
+      "id": 1,
+      "ruc": 20100100102,
+      "nombre_empresa": "Chocolates S.A.C",
+      "direccion": "Av. Los Incas 123",
+      "telefonoEmpresa": "987654321",
+      "correo_empresarial": "chocolates@choco.com",
+      "representante_legal": "Juan Emilio Perez Quispe",
+      "fecha_registro": "2021-06-01",
+      "usuario_cliente_proveedor_id": 1
+    }
+  ],
+  "factura": [
+    {
+      "id": 1,
+      "numero_factura": "001-001-0000001",
+      "montoTotal": 100,
+      "montoTotalIGV": 118,
+      "moneda": "PEN",
+      "fecha_emision": "2021-06-01",
+      "fecha_vencimiento": "2021-06-30",
+      "cliente_proveedor_RUC": 20100100101,
+      "cliente_deudor_RUC": 20100100101
+    }
+  ]
+}

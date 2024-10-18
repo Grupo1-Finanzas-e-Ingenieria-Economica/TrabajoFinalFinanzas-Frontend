@@ -9,6 +9,7 @@ import TceaManagementComponent from '@/DescuentOS/pages/tcea-management.componen
 import TheOperationsComponent from '@/DescuentOS/pages/the-operations.component.vue'
 import CommisionManagementComponent from '@/DescuentOS/pages/commision-management.component.vue'
 import FactoringManagementComponent from '@/DescuentOS/pages/factoring-management.component.vue'
+import RegisterSupplierComponent from '@/DescuentOS/pages/register-supplier.component.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,6 +27,11 @@ const router = createRouter({
       path: '/register',
       name: 'register',
       component: TheRegisterComponent
+    },
+    {
+      path: '/register-supplier',
+      name: 'register-supplier',
+      component: RegisterSupplierComponent
     },
     {
       path: '/dashboard',

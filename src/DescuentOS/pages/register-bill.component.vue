@@ -27,7 +27,7 @@ export default {
 
 <template>
   <div class="nueva-factura-container">
-    <h1>Registrar Nueva Factura</h1>
+    <h1>Factura Electrónica</h1>
 
     <form @submit.prevent="guardarFactura">
       <div class="form-group">
@@ -36,15 +36,9 @@ export default {
       </div>
 
       <div class="form-group">
-        <label for="montoTotal">Monto Total</label>
+        <label for="montoTotal">Monto Total (con IGV)</label>
         <pv-input-text type="number" step="0.01" id="montoTotal" v-model="factura.montoTotal" required />
       </div>
-
-      <div class="form-group">
-        <label for="montoTotalIgv">Monto Total IGV</label>
-        <pv-input-text type="number" step="0.01" id="montoTotalIgv" v-model="factura.montoTotalIgv" required />
-      </div>
-
       <div class="form-group">
         <label for="moneda">Moneda</label>
         <pv-select-button v-model="factura.moneda" :options="monedas" aria-labelledby="basic"/>
@@ -61,17 +55,11 @@ export default {
       </div>
 
       <div class="form-group">
-        <label for="rucClienteProveedor">RUC Cliente Proveedor</label>
+        <label for="rucClienteProveedor">RUC Cliente</label>
         <input type="text" id="rucClienteProveedor" v-model="factura.rucClienteProveedor" required />
       </div>
-
       <div class="form-group">
-        <label for="rucClienteDeudor">RUC Cliente Deudor</label>
-        <input type="text" id="rucClienteDeudor" v-model="factura.rucClienteDeudor" required />
-      </div>
-
-      <div class="form-group">
-        <button type="submit" class="btn-guardar">Guardar</button>
+        <button type="submit" class="btn-guardar">CONFIRMAR</button>
       </div>
     </form>
   </div>

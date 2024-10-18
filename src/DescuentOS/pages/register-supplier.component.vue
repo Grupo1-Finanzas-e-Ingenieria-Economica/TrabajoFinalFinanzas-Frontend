@@ -2,18 +2,18 @@
 import UserService from '@/DescuentOS/services/user.service.js'
 
 export default {
-  name: 'the-register.component',
+  name: 'register-supplier.component',
   data() {
     return {
       usuario: {
-        documento_identidad: '',
-        nombre: '',
-        apellido: '',
-        email: '',
-        usuario: '',
-        contrasena: '',
-        confirmar_contrasena: '',
-        rol: ''
+        ruc: 0,
+        nombre_empresa: '',
+        direccion: '',
+        telefono_empresa: '',
+        correo_empresarial: '',
+        representante_legal: '',
+        fecha_registro: '',
+        usuario_cliente_proveedor: 0,
       },
     };
   },
@@ -21,24 +21,24 @@ export default {
     async registrarUsuario() {
       const user = {
         id: null,
-        documento_identidad: this.usuario.documento_identidad,
-        Nombre: this.usuario.nombre,
-        Apellido: this.usuario.apellido,
-        email: this.usuario.email,
-        usuario: this.usuario.usuario,
-        contrasena: this.usuario.contrasena,
-        rol: 'user'
+        ruc: this.usuario.ruc,
+        nombre_empresa: this.usuario.nombre_empresa,
+        direccion: this.usuario.direccion,
+        telefono_empresa: this.usuario.telefono_empresa,
+        correo_empresarial: this.usuario.correo_empresarial,
+        representante_legal: this.usuario.representante_legal,
+        fecha_registro: this.usuario.fecha_registro,
+        usuario_cliente_proveedor_id: localStorage.getItem('userId')
       }
-      const response = await UserService.postUser(user);
-      console.log(response.data.id);
-      localStorage.setItem('userId', response.data.id);
-      this.$router.push('/register-supplier');
+      const response = await UserService.postUserSupplier(user);
+      console.log(response);
+      this.$router.push('/login');
     },
     goToLogin() {
       this.$router.push('/login');
     },
   },
-};
+}
 </script>
 
 <template>
@@ -51,32 +51,32 @@ export default {
         <h2>Regístrate</h2>
         <form @submit.prevent="registrarUsuario">
           <div class="form-group">
-            <label for="documento">Documento de identidad</label>
-            <pv-input-text type="text" id="documento" v-model="usuario.documento_identidad" required />
+            <label for="documento">RUC</label>
+            <pv-input-text type="number" id="documento" v-model="usuario.ruc" required />
           </div>
           <div class="form-group">
-            <label for="nombre">Nombre</label>
-            <pv-input-text type="text" id="nombre" v-model="usuario.nombre" required />
+            <label for="nombre">Nombre Empresa</label>
+            <pv-input-text type="text" id="nombre" v-model="usuario.nombre_empresa" required />
           </div>
           <div class="form-group">
-            <label for="apellido">Apellido</label>
-            <pv-input-text type="text" id="apellido" v-model="usuario.apellido" required />
+            <label for="apellido">Direccion</label>
+            <pv-input-text type="text" id="apellido" v-model="usuario.direccion" required />
           </div>
           <div class="form-group">
-            <label for="usuario">Usuario</label>
-            <pv-input-text type="text" id="usuario" v-model="usuario.usuario" required />
+            <label for="usuario">Telefono Empresa</label>
+            <pv-input-text type="text" id="usuario" v-model="usuario.telefono_empresa" required />
           </div>
           <div class="form-group">
-            <label for="correo">Correo electrónico</label>
-            <pv-input-text type="email" id="correo" v-model="usuario.email" required />
+            <label for="correo">Correo Empresarial</label>
+            <pv-input-text type="email" id="correo" v-model="usuario.correo_empresarial" required />
           </div>
           <div class="form-group">
-            <label for="password">Contraseña</label>
-            <pv-input-text type="password" id="password" v-model="usuario.contrasena" required />
+            <label for="password">Represante Legal</label>
+            <pv-input-text type="password" id="password" v-model="usuario.representante_legal" required />
           </div>
           <div class="form-group">
-            <label for="confirmPassword">Confirmar contraseña</label>
-            <pv-input-text type="password" id="confirmPassword" v-model="usuario.confirmPassword" required />
+            <label for="confirmPassword">Fecha Registro</label>
+            <pv-input-text type="password" id="confirmPassword" v-model="usuario.fecha_registro" required />
           </div>
           <pv-button type="submit" class="btn">Registrarse</pv-button>
         </form>

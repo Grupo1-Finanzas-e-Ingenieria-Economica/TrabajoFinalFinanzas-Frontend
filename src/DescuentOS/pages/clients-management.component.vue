@@ -27,6 +27,7 @@ export default {
       this.mostrarModal = true;
     },
     cerrarModal() {
+      this.mostrarModal = false;
     },
     registrarCliente() {
     },
