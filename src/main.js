@@ -14,6 +14,7 @@ import Row from 'primevue/row'
 import CascadeSelect from 'primevue/cascadeselect'
 import SelectButton from 'primevue/selectbutton'
 import Select from 'primevue/select'
+import DatePicker from 'primevue/datepicker'
 import Aura from "@primevue/themes/aura";
 import "./resources/primevue-sass-theme-main/themes/aura/aura-light/green/theme.scss";
 
@@ -37,4 +38,6 @@ app.component('pv-row', Row)
 app.component('pv-cascade-select', CascadeSelect)
 app.component('pv-select-button', SelectButton)
 app.component('pv-select', Select)
+app.component('pv-date-picker', DatePicker)
+
 app.mount('#app')

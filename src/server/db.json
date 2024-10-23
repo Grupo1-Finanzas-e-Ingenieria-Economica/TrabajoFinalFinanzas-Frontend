@@ -9,6 +9,26 @@
       "usuario": "Juan Quispe",
       "contrasena": "123456",
       "rol": "cliente"
+    },
+    {
+      "id": 2,
+      "documento_identidad": "71458906",
+      "Nombre": "El Pepe 2",
+      "Apellido": "Tipo Añañin 2",
+      "email": "luisaquijequiroga11@gmail.com",
+      "usuario": "Pepecito",
+      "contrasena": "123",
+      "rol": "user"
+    },
+    {
+      "id": 3,
+      "documento_identidad": "432",
+      "Nombre": "44234",
+      "Apellido": "2432",
+      "email": "234324@gmail.com",
+      "usuario": "34243",
+      "contrasena": "2342",
+      "rol": "user"
     }
   ],
   "cliente_proveedor": [
@@ -22,6 +42,17 @@
       "representante_legal": "Juan Emilio Perez Quispe",
       "fecha_registro": "2021-06-01",
       "usuario_cliente_proveedor_id": 1
+    },
+    {
+      "id": 2,
+      "ruc": "1234215672153125",
+      "nombre_empresa": "Chocolaticos SAC",
+      "direccion": "Av. Salaverry 1928222222",
+      "telefono_empresa": "947284628",
+      "correo_empresarial": "dada@gmail.com",
+      "representante_legal": "Pepe Quispe",
+      "fecha_registro": "2000-08-23",
+      "usuario_cliente_proveedor_id": "2"
     }
   ],
   "factura": [

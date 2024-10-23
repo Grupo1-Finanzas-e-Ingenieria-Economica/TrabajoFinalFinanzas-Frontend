@@ -1,3 +1,24 @@
+<script>
+export default {
+  name: 'the-login.component',
+  data() {
+    return {
+      username: '',
+      password: ''
+    };
+  },
+  methods: {
+    handleLogin() {
+      this.$router.push('/dashboard');
+    },
+    goToRegister(){
+      this.$router.push('/register');
+    }
+
+  }
+};
+</script>
+
 <template>
   <div class="login-container">
     <div class="login-box">
@@ -29,27 +50,6 @@
     </div>
   </div>
 </template>
-
-<script>
-export default {
-  name: 'the-login.component',
-  data() {
-    return {
-      username: '',
-      password: ''
-    };
-  },
-  methods: {
-    handleLogin() {
-      this.$router.push('/dashboard');
-    },
-    goToRegister(){
-      this.$router.push('/register');
-    }
-
-  }
-};
-</script>
 
 <style>
 .login-container {

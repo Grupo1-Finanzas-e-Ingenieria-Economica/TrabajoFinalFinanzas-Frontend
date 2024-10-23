@@ -18,7 +18,8 @@ export default {
     };
   },
   methods: {
-    async registrarUsuario() {
+    async registrarUsuario()
+    {
       const user = {
         id: null,
         documento_identidad: this.usuario.documento_identidad,
@@ -33,7 +34,8 @@ export default {
       console.log(response.data.id);
       localStorage.setItem('userId', response.data.id);
       this.$router.push('/register-supplier');
-    },
+    }
+,
     goToLogin() {
       this.$router.push('/login');
     },

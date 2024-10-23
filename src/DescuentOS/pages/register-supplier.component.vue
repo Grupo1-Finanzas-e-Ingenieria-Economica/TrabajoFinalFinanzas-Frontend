@@ -27,10 +27,13 @@ export default {
         telefono_empresa: this.usuario.telefono_empresa,
         correo_empresarial: this.usuario.correo_empresarial,
         representante_legal: this.usuario.representante_legal,
-        fecha_registro: this.usuario.fecha_registro,
+        fecha_registro: this.usuario.fecha_registro.toISOString().split('T')[0],
         usuario_cliente_proveedor_id: localStorage.getItem('userId')
       }
       const response = await UserService.postUserSupplier(user);
+
+      localStorage.clear();
+
       console.log(response);
       this.$router.push('/login');
     },
@@ -72,11 +75,11 @@ export default {
           </div>
           <div class="form-group">
             <label for="password">Represante Legal</label>
-            <pv-input-text type="password" id="password" v-model="usuario.representante_legal" required />
+            <pv-input-text type="text" id="password" v-model="usuario.representante_legal" required />
           </div>
           <div class="form-group">
             <label for="confirmPassword">Fecha Registro</label>
-            <pv-input-text type="password" id="confirmPassword" v-model="usuario.fecha_registro" required />
+            <pv-date-picker v-model="usuario.fecha_registro" dateFormat="dd/mm/yy" required />
           </div>
           <pv-button type="submit" class="btn">Registrarse</pv-button>
         </form>
