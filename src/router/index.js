@@ -10,6 +10,7 @@ import TheOperationsComponent from '@/DescuentOS/pages/the-operations.component.
 import CommisionManagementComponent from '@/DescuentOS/pages/commision-management.component.vue'
 import FactoringManagementComponent from '@/DescuentOS/pages/factoring-management.component.vue'
 import RegisterSupplierComponent from '@/DescuentOS/pages/register-supplier.component.vue'
+import PickRateComponent from '@/DescuentOS/pages/pick-rate.component.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -72,6 +73,11 @@ const router = createRouter({
       path: '/operations',
       name: 'operations',
       component: TheOperationsComponent
+    },
+    {
+      path: '/pick-rate',
+      name: 'pick-rate',
+      component: PickRateComponent
     }
   ]
 })

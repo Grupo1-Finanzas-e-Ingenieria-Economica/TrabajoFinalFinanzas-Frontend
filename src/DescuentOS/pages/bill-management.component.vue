@@ -1,34 +1,14 @@
 <script>
+import BillService from '@/DescuentOS/services/bill.service.js'
+
 export default {
   name: 'bill-management.component',
+  computed:{
+  },
   data() {
     return {
-      facturas: [
-        {
-          numero: '001',
-          montoTotal: 1000,
-          moneda: 'USD',
-          fechaEmision: '2021-10-01',
-          fechaVencimiento: '2021-10-31',
-          clienteProveedor: 'Cliente 1',
-        },
-        {
-          numero: '002',
-          montoTotal: 2000,
-          moneda: 'USD',
-          fechaEmision: '2021-10-02',
-          fechaVencimiento: '2021-10-30',
-          clienteProveedor: 'Cliente 2',
-        },
-        {
-          numero: '003',
-          montoTotal: 3000,
-          moneda: 'USD',
-          fechaEmision: '2021-10-03',
-          fechaVencimiento: '2021-10-29',
-          clienteProveedor: 'Cliente 3',
-        }
-      ],
+      facturas: []
+
     };
   },
   methods: {
@@ -43,8 +23,15 @@ export default {
     eliminarFactura(id) {
       console.log(id)
     },
+
+    async fetchFacturas() {
+      const rucUser = localStorage.getItem('rucUser');
+      this.facturas = await BillService.getBillBySupplierRUC(rucUser);
+      console.log(this.facturas);
+    }
   },
-  mounted() {
+  async mounted() {
+    await this.fetchFacturas();
   },
 }
 </script>
@@ -63,14 +50,22 @@ export default {
       <pv-data-view :value="facturas">
         <template #list="slotProps">
           <div class="flex flex-col">
+            <div class="factura-data grid grid-cols-6 gap-4 p-6" >
+              <div><h3>Numero Factura</h3></div>
+              <div><h3>Monto Total (con IGV)</h3></div>
+              <div><h3>Moneda</h3></div>
+              <div><h3>Fecha de emisión</h3></div>
+              <div><h3>Fecha de vencimiento</h3></div>
+              <div><h3>RUC cliente proveedor</h3></div>
+            </div>
             <div v-for="(factura, index) in slotProps.items" :key="index">
               <div class="factura-data grid grid-cols-6 gap-4 p-6" :class="{ 'border-t border-surface-200 dark:border-surface-700': index !== 0 }">
-                <div>{{ factura.numero }}</div>
-                <div>{{ factura.montoTotal }}</div>
+                <div>{{ factura.numero_factura }}</div>
+                <div>{{ factura.montoTotalIGV }}</div>
                 <div>{{ factura.moneda }}</div>
                 <div>{{ factura.fechaEmision }}</div>
                 <div>{{ factura.fechaVencimiento }}</div>
-                <div>{{ factura.clienteProveedor }}</div>
+                <div>{{ factura.cliente_proveedor_RUC }}</div>
                 <div class="flex justify-end col-span-6">
                   <pv-button icon="pi pi-pencil" @click="editarFactura(factura.id)" class="btn-editar"></pv-button>
                   <pv-button icon="pi pi-trash" @click="eliminarFactura(factura.id)" class="btn-eliminar"></pv-button>

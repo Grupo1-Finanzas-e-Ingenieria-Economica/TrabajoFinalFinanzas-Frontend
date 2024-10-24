@@ -1,12 +1,13 @@
 <script>
 
+import BillService from '@/DescuentOS/services/bill.service.js'
+
 export default {
   name: 'register-bill.component',
   data() {
     return {
       factura: {
         numero: null,
-        montoTotal: null,
         montoTotalIgv: null,
         moneda: 'PEN',
         fechaEmision: null,
@@ -14,12 +15,31 @@ export default {
         rucClienteProveedor: '',
         rucClienteDeudor: '',
       },
-      monedas: ['PEN', 'USD']
+      monedas: ['PEN', 'USD'],
+
+
     };
   },
   methods: {
 
-    guardarFactura() {
+    async guardarFactura() {
+
+      const nueva_factura = {
+          id: null,
+          numero_factura: this.factura.numero,
+          montoTotalIGV: parseFloat(this.factura.montoTotalIgv),
+          moneda: this.factura.moneda,
+          fechaEmision: this.factura.fechaEmision,
+          fechaVencimiento: this.factura.fechaVencimiento,
+          cliente_proveedor_RUC: localStorage.getItem('rucUser'),
+          cliente_deudor_RUC: this.factura.rucClienteDeudor,
+      }
+
+      console.log(nueva_factura);
+
+      await BillService.postBill(nueva_factura);
+
+      this.$router.push('/pick-rate');
     },
   },
 }
@@ -32,12 +52,12 @@ export default {
     <form @submit.prevent="guardarFactura">
       <div class="form-group">
         <label for="numero">Número de Factura</label>
-        <pv-input-text type="number" id="numero" v-model="factura.numero" required />
+        <pv-input-text type="text" id="numero" v-model="factura.numero" required />
       </div>
 
       <div class="form-group">
         <label for="montoTotal">Monto Total (con IGV)</label>
-        <pv-input-text type="number" step="0.01" id="montoTotal" v-model="factura.montoTotal" required />
+        <pv-input-number v-model="factura.montoTotalIgv" inputId="minmaxfraction" :minFractionDigist="2" :maxFractionDigits="5" fluid required />
       </div>
       <div class="form-group">
         <label for="moneda">Moneda</label>
@@ -56,7 +76,7 @@ export default {
 
       <div class="form-group">
         <label for="rucClienteProveedor">RUC Cliente</label>
-        <input type="text" id="rucClienteProveedor" v-model="factura.rucClienteProveedor" required />
+        <input type="text" id="rucClienteProveedor" v-model="factura.rucClienteDeudor" required />
       </div>
       <div class="form-group">
         <button type="submit" class="btn-guardar">CONFIRMAR</button>

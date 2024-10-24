@@ -1,4 +1,6 @@
 <script>
+import UserService from '@/DescuentOS/services/user.service.js'
+
 export default {
   name: 'the-login.component',
   data() {
@@ -8,8 +10,22 @@ export default {
     };
   },
   methods: {
-    handleLogin() {
-      this.$router.push('/dashboard');
+    async handleLogin() {
+
+      const userId = await UserService.login(this.username, this.password);
+
+      const rucUser = await UserService.getUserRUC(userId);
+
+      localStorage.setItem('rucUser', rucUser);
+      localStorage.setItem('userId', userId);
+
+      if (userId) {
+        console.log("User ID: " + localStorage.getItem('userId'));
+        console.log("RUC User: " + localStorage.getItem('rucUser'));
+        this.$router.push('/dashboard');
+      } else {
+        console.log("Invalid credentials");
+      }
     },
     goToRegister(){
       this.$router.push('/register');

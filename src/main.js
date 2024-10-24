@@ -4,6 +4,7 @@ import router from './router'
 import PrimeVue from "primevue/config";
 import "primeicons/primeicons.css";
 import InputText from "primevue/inputtext";
+import InputNumber from "primevue/inputnumber";
 import Button from "primevue/button";
 import Card from 'primevue/card'
 import DataTable from 'primevue/datatable'
@@ -28,6 +29,7 @@ app.use(PrimeVue, {
   }
 })
 app.component('pv-input-text', InputText)
+app.component('pv-input-number', InputNumber)
 app.component('pv-button', Button)
 app.component('pv-card', Card)
 app.component('pv-data-table', DataTable)

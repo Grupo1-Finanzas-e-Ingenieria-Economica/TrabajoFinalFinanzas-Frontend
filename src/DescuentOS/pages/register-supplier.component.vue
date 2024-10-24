@@ -28,7 +28,7 @@ export default {
         correo_empresarial: this.usuario.correo_empresarial,
         representante_legal: this.usuario.representante_legal,
         fecha_registro: this.usuario.fecha_registro.toISOString().split('T')[0],
-        usuario_cliente_proveedor_id: localStorage.getItem('userId')
+        usuario_cliente_proveedor_id: parseInt(localStorage.getItem('userId'))
       }
       const response = await UserService.postUserSupplier(user);
 
