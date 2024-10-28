@@ -1,6 +1,7 @@
 <script>
-
+import { jwtDecode } from 'jwt-decode';
 import BillService from '@/DescuentOS/services/bill.service.js'
+import UserService from '@/DescuentOS/services/user.service.js'
 
 export default {
   name: 'register-bill.component',
@@ -23,16 +24,25 @@ export default {
   methods: {
 
     async guardarFactura() {
+      const token = localStorage.getItem('token');
+      const decoded = jwtDecode(token);
+      const username = decoded.username;
+
+      console.log("Id del usuario: " + username)
+
+      const rucUser = await UserService.getUserRUC(username);
+
+      console.log("RUC del usuario: " + rucUser);
 
       const nueva_factura = {
-          id: null,
-          numero_factura: this.factura.numero,
+          numero: this.factura.numero,
+          montoTotal: 0.00,
           montoTotalIGV: parseFloat(this.factura.montoTotalIgv),
           moneda: this.factura.moneda,
           fechaEmision: this.factura.fechaEmision,
           fechaVencimiento: this.factura.fechaVencimiento,
-          cliente_proveedor_RUC: localStorage.getItem('rucUser'),
-          cliente_deudor_RUC: this.factura.rucClienteDeudor,
+          rucClienteProveedor: rucUser,
+          rucClienteDeudor: this.factura.rucClienteDeudor,
       }
 
       console.log(nueva_factura);

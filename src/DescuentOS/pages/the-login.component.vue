@@ -1,30 +1,47 @@
 <script>
 import UserService from '@/DescuentOS/services/user.service.js'
+import Swal from 'sweetalert2'
 
 export default {
   name: 'the-login.component',
   data() {
     return {
       username: '',
-      password: ''
+      password: '',
     };
   },
   methods: {
     async handleLogin() {
 
-      const userId = await UserService.login(this.username, this.password);
+      try {
+        const user = {
+          username: this.username,
+          password: this.password
+        }
 
-      const rucUser = await UserService.getUserRUC(userId);
+        const response = await UserService.loginUser(user);
 
-      localStorage.setItem('rucUser', rucUser);
-      localStorage.setItem('userId', userId);
+        localStorage.setItem('token', response.data.token);
 
-      if (userId) {
-        console.log("User ID: " + localStorage.getItem('userId'));
-        console.log("RUC User: " + localStorage.getItem('rucUser'));
-        this.$router.push('/dashboard');
-      } else {
-        console.log("Invalid credentials");
+        console.log("Token guardado: " + localStorage.getItem('token'));
+
+        if (response.data.token) {
+          this.$router.push('/dashboard');
+        }
+      } catch {
+        if (this.username === '' || this.password === '') {
+          Swal.fire({
+            icon: 'error',
+            title: 'Campos vacíos',
+            text: 'Por favor, completa los campos.'
+          })
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Credenciales inválidas',
+            text: 'Por favor, verifica tu usuario y contraseña.'
+          })
+        }
       }
     },
     goToRegister(){

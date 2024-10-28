@@ -21,21 +21,29 @@ export default {
     async registrarUsuario()
     {
       const user = {
-        id: null,
-        documento_identidad: this.usuario.documento_identidad,
-        Nombre: this.usuario.nombre,
-        Apellido: this.usuario.apellido,
+        apellido: this.usuario.apellido,
+        dni: this.usuario.documento_identidad,
         email: this.usuario.email,
-        usuario: this.usuario.usuario,
-        contrasena: this.usuario.contrasena,
-        rol: 'user'
+        nombre: this.usuario.nombre,
+        password: this.usuario.contrasena,
+        rol: 'CLIENTE',
+        username: this.usuario.usuario,
       }
-      const response = await UserService.postUser(user);
-      console.log(response.data.id);
-      localStorage.setItem('userId', response.data.id);
+      const response = await UserService.registerUser(user);
+
+      const user_login = {
+        username: this.usuario.usuario,
+        password: this.usuario.contrasena
+      }
+
+      const tokenAux = await UserService.loginUser(user_login);
+
+      localStorage.setItem('token', tokenAux.data.token);
+
+      localStorage.setItem('userId', response.data);
+
       this.$router.push('/register-supplier');
-    }
-,
+    },
     goToLogin() {
       this.$router.push('/login');
     },

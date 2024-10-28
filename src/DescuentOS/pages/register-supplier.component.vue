@@ -1,5 +1,5 @@
 <script>
-import UserService from '@/DescuentOS/services/user.service.js'
+import UserSupplierService from '@/DescuentOS/services/user-supplier.service.js';
 
 export default {
   name: 'register-supplier.component',
@@ -20,21 +20,21 @@ export default {
   methods: {
     async registrarUsuario() {
       const user = {
-        id: null,
         ruc: this.usuario.ruc,
-        nombre_empresa: this.usuario.nombre_empresa,
-        direccion: this.usuario.direccion,
-        telefono_empresa: this.usuario.telefono_empresa,
-        correo_empresarial: this.usuario.correo_empresarial,
-        representante_legal: this.usuario.representante_legal,
-        fecha_registro: this.usuario.fecha_registro.toISOString().split('T')[0],
-        usuario_cliente_proveedor_id: parseInt(localStorage.getItem('userId'))
+        nombreEmpresa: this.usuario.nombre_empresa,
+        direccionEmpresa: this.usuario.direccion,
+        telefonoEmpresa: this.usuario.telefono_empresa,
+        correoEmpresa: this.usuario.correo_empresarial,
+        fechaRegistro: this.usuario.fecha_registro.toISOString().split('T')[0],
+        idUsuario: parseInt(localStorage.getItem('userId'))
       }
-      const response = await UserService.postUserSupplier(user);
+
+      console.log("User: " + user.idUsuario);
+
+      const response = await UserSupplierService.registerUserSupplier(user);
 
       localStorage.clear();
-
-      console.log(response);
+      console.log(response.data);
       this.$router.push('/login');
     },
     goToLogin() {

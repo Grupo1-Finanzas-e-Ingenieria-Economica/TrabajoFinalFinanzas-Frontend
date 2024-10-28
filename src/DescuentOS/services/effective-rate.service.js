@@ -1,18 +1,17 @@
 import axios from 'axios'
+import BASE_URL from '@/DescuentOS/services/http-common.js'
 
-const API = 'http://localhost:3000/'
 
 class EffectiveRateService {
-  async postEffectiveRate(data){
-    const response = await axios.post(API + "tasa_efectiva", data);
-
-    return response.data.length > 0 ? response.data : null;
-  }
 
   async getEffectiveRate(){
-    const response = await axios.get(API + "tasa_efectiva");
-
-    return response.data.length > 0 ? response.data : null;
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}quma/tasaefectiva/usuario/listar`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    return response.data
   }
 }
 

@@ -35,24 +35,23 @@ export default {
     <h2>Nominal Rates</h2>
     <div class="rate-grid">
       <pv-card v-for="tasa in tasa_nominal" :key="tasa.id" @click="handleNominalRateClick(tasa.id)">
-        <template #title>{{ tasa.tasa_interes }}%</template>
+        <template #title>{{ tasa.tasaInteres }}%</template>
         <template #content>
-          <h3>Plazo: {{ tasa.plazo }} días</h3>
-          <p>Capitalizacion {{ tasa.capitalizacion }}</p>
-          <p>Fecha inicio: {{tasa.fecha_inicio}}</p>
-          <p>Fecha_fin: {{tasa.fecha_fin}}</p>
+          <h3>Plazo: {{ tasa.plazo }}</h3>
+          <p>Capitalizacion {{ tasa.capitalizable }}</p>
+          <p>Fecha inicio: {{tasa.fechaInicio}}</p>
+          <p>Fecha_fin: {{tasa.fechaFin}}</p>
         </template>
       </pv-card>
     </div>
     <h2>Effective Rates</h2>
     <div class="rate-grid">
       <pv-card v-for="tasa in tasa_efectiva" :key="tasa.id" @click="handleEffectiveRateClick(tasa.id)">
-        <template #title>{{ tasa.tasa_interes }}%</template>
+        <template #title>{{ tasa.tasaInteres }}%</template>
         <template #content>
-          <h3>Plazo: {{ tasa.plazo }} días</h3>
-          <p>Capitalizacion {{ tasa.capitalizacion }}</p>
-          <p>Fecha inicio: {{tasa.fecha_inicio}}</p>
-          <p>Fecha_fin: {{tasa.fecha_fin}}</p>
+          <h3>Plazo: {{ tasa.plazo }}</h3>
+          <p>Fecha inicio: {{tasa.fechaInicio}}</p>
+          <p>Fecha_fin: {{tasa.fechaFin}}</p>
         </template>
       </pv-card>
     </div>
