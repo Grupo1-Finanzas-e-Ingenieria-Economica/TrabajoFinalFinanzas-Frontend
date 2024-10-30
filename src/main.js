@@ -3,6 +3,9 @@ import App from './App.vue'
 import router from './router'
 import PrimeVue from "primevue/config";
 import "primeicons/primeicons.css";
+import Toolbar from 'primevue/toolbar'
+import OverlayBadge from 'primevue/overlaybadge'
+import Avatar from 'primevue/avatar'
 import InputText from "primevue/inputtext";
 import InputNumber from "primevue/inputnumber";
 import Button from "primevue/button";
@@ -29,6 +32,9 @@ app.use(PrimeVue, {
   }
 })
 app.component('pv-input-text', InputText)
+app.component('pv-toolbar', Toolbar)
+app.component('pv-overlay-badge', OverlayBadge)
+app.component('pv-avatar', Avatar)
 app.component('pv-input-number', InputNumber)
 app.component('pv-button', Button)
 app.component('pv-card', Card)

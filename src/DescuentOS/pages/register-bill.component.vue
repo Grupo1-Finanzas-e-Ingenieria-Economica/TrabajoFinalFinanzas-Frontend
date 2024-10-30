@@ -35,9 +35,9 @@ export default {
       console.log("RUC del usuario: " + rucUser);
 
       const nueva_factura = {
-          numero: this.factura.numero,
-          montoTotal: 0.00,
-          montoTotalIGV: parseFloat(this.factura.montoTotalIgv),
+          numero: parseInt(this.factura.numero),
+          montoTotal: 0,
+          montoTotalIgv: parseFloat(this.factura.montoTotalIgv),
           moneda: this.factura.moneda,
           fechaEmision: this.factura.fechaEmision,
           fechaVencimiento: this.factura.fechaVencimiento,
@@ -47,7 +47,9 @@ export default {
 
       console.log(nueva_factura);
 
-      await BillService.postBill(nueva_factura);
+      const response = await BillService.postBill(nueva_factura);
+
+      localStorage.setItem('factura', response.data);
 
       this.$router.push('/pick-rate');
     },

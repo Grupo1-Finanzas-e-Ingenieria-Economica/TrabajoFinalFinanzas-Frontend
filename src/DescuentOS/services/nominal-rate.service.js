@@ -10,7 +10,6 @@ class NominalRateService {
         'Authorization': `Bearer ${token}`
       }
     });
-
     return response.data;
   }
 }

@@ -1,6 +1,8 @@
 <script>
 import NominalRateService from '@/DescuentOS/services/nominal-rate.service.js';
 import EffectiveRateService from '@/DescuentOS/services/effective-rate.service.js';
+import DiscountService from '@/DescuentOS/services/discount.service.js'
+import FactoringOperationService from '@/DescuentOS/services/factoring-operation.service.js'
 
 export default {
   name: 'pick-rate.component',
@@ -17,11 +19,61 @@ export default {
       this.tasa_efectiva = await EffectiveRateService.getEffectiveRate();
       console.log(this.tasa_efectiva)
     },
-    handleEffectiveRateClick(rateId) {
-      console.log('Selected Effective Rate ID:', rateId);
+
+    formatDateTime(dateTime) {
+      return dateTime.replace('T', ' ');
     },
-    handleNominalRateClick(rateId) {
+
+    async handleEffectiveRateClick(rateId) {
+
+      const discount = {
+        fecha: "",
+        idComision: 1,
+        idTasaNominal: 0,
+        idTasaEfectiva: parseInt(rateId),
+      }
+
+      console.log('Selected Effective Rate ID:', rateId);
+
+      const discountId = await DiscountService.postDiscount(discount);
+      console.log("Response: ", discountId.data);
+
+      const factoring = {
+        idDescuento: parseInt(discountId.data),
+        idFactura: parseInt(localStorage.getItem('factura'))
+      }
+
+      const operacion_factoring = await FactoringOperationService.postFactoringOperation(factoring)
+
+      console.log("Response: ", operacion_factoring.data);
+    },
+    async handleNominalRateClick(rateId) {
+
+
+      const discount = {
+        fecha: "",
+        idComision: 1,
+        idTasaNominal: parseInt(rateId),
+        idTasaEfectiva: 0,
+      }
+
       console.log('Selected Nominal Rate ID:', rateId);
+
+      const discountId = await DiscountService.postDiscount(discount);
+      console.log("Response: ", discountId.data);
+
+      const factoring = {
+        idDescuento: parseInt(discountId.data),
+        idFactura: parseInt(localStorage.getItem('factura'))
+      }
+
+      console.log("Factoring: ", factoring);
+
+      const operacion_factoring = await FactoringOperationService.postFactoringOperation(factoring)
+
+      console.log("Response: ", operacion_factoring.data);
+
+      this.$router.push('/bill-management');
     }
   },
   async mounted() {
@@ -39,8 +91,8 @@ export default {
         <template #content>
           <h3>Plazo: {{ tasa.plazo }}</h3>
           <p>Capitalizacion {{ tasa.capitalizable }}</p>
-          <p>Fecha inicio: {{tasa.fechaInicio}}</p>
-          <p>Fecha_fin: {{tasa.fechaFin}}</p>
+          <p>Fecha inicio: {{formatDateTime(tasa.fechaInicio)}}</p>
+          <p>Fecha_fin: {{formatDateTime(tasa.fechaFin)}}</p>
         </template>
       </pv-card>
     </div>
@@ -50,8 +102,8 @@ export default {
         <template #title>{{ tasa.tasaInteres }}%</template>
         <template #content>
           <h3>Plazo: {{ tasa.plazo }}</h3>
-          <p>Fecha inicio: {{tasa.fechaInicio}}</p>
-          <p>Fecha_fin: {{tasa.fechaFin}}</p>
+          <p>Fecha inicio: {{ formatDateTime(tasa.fechaInicio) }}</p>
+          <p>Fecha_fin: {{ formatDateTime(tasa.fechaFin) }}</p>
         </template>
       </pv-card>
     </div>

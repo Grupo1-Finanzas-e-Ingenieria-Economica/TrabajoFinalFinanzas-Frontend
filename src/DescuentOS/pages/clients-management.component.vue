@@ -1,9 +1,11 @@
 <script>
+import UserDebtorService from '@/DescuentOS/services/user-debtor.service.js'
+
 export default {
   name: 'clients-management.component',
   data() {
     return {
-      clientes: [],
+      deudores: [],
       filtroRuc: "",
       filtroNombre: "",
       mostrarModal: false,
@@ -18,21 +20,15 @@ export default {
       tipo_cliente: ["Proveedor", "Deudor"]
     };
   },
-  computed: {
-  },
   methods: {
+    async fetchClients() {
+      this.deudores = await UserDebtorService.getDebtors();
+    },
     buscarClientes() {
     },
-    abrirModalNuevoCliente() {
-      this.mostrarModal = true;
-    },
-    cerrarModal() {
-      this.mostrarModal = false;
-    },
-    registrarCliente() {
-    },
   },
-  mounted() {
+  async mounted() {
+    await this.fetchClients()
   },
 }
 </script>
@@ -42,139 +38,125 @@ export default {
     <h1>Gestión de Clientes (Proveedores y Deudores)</h1>
 
     <div class="filtros">
-      <input type="text" v-model="filtroRuc" placeholder="Buscar por RUC" />
-      <input type="text" v-model="filtroNombre" placeholder="Buscar por nombre" />
-      <pv-button @click="buscarClientes">Buscar</pv-button>
+      <input type="text" v-model="filtroRuc" placeholder="Buscar por RUC" class="filtro-input" />
+      <input type="text" v-model="filtroNombre" placeholder="Buscar por nombre" class="filtro-input" />
+      <pv-button @click="buscarClientes" class="btn-buscar">Buscar</pv-button>
     </div>
 
-    <table class="tabla-clientes">
-      <thead>
-      <tr>
-        <th>RUC</th>
-        <th>Nombre de Empresa</th>
-        <th>Dirección</th>
-        <th>Teléfono</th>
-        <th>Correo</th>
-        <th>Tipo</th>
-      </tr>
-      </thead>
-    </table>
+    <div class="clients-table">
+      <pv-data-view :value="deudores">
+        <template #list="slotProps">
+          <div class="table-container">
+            <div class="table-row table-header">
+              <div>RUC</div>
+              <div>Nombre Empresa</div>
+              <div>Dirección Empresa</div>
+              <div>Teléfono Empresa</div>
+              <div>Correo Empresa</div>
+              <div>Fecha Registro</div>
+            </div>
 
-    <pv-button class="btn-nuevo-cliente" @click="abrirModalNuevoCliente">
-      Agregar Nuevo Cliente
-    </pv-button>
-
-    <div v-if="mostrarModal" class="modal">
-      <div class="modal-contenido">
-        <h2>Registrar Nuevo Cliente</h2>
-        <form @submit.prevent="registrarCliente">
-          <div class="form-group">
-            <label for="ruc">RUC</label>
-            <input type="text" id="ruc" v-model="nuevoCliente.ruc" required />
+            <div v-for="(deudor, index) in slotProps.items" :key="index" class="table-row">
+              <div class="table-cell">
+                <span class="cell-label">RUC:</span> {{ deudor.ruc }}
+              </div>
+              <div class="table-cell">
+                <span class="cell-label">Nombre Empresa:</span> {{ deudor.nombreEmpresa }}
+              </div>
+              <div class="table-cell">
+                <span class="cell-label">Dirección Empresa:</span> {{ deudor.direccionEmpresa }}
+              </div>
+              <div class="table-cell">
+                <span class="cell-label">Teléfono Empresa:</span> {{ deudor.telefonoEmpresa }}
+              </div>
+              <div class="table-cell">
+                <span class="cell-label">Correo Empresa:</span> {{ deudor.correoEmpresa }}
+              </div>
+              <div class="table-cell">
+                <span class="cell-label">Fecha Registro:</span> {{ deudor.fechaRegistro }}
+              </div>
+            </div>
           </div>
-          <div class="form-group">
-            <label for="nombreEmpresa">Nombre de Empresa</label>
-            <input type="text" id="nombreEmpresa" v-model="nuevoCliente.nombreEmpresa" required />
-          </div>
-          <div class="form-group">
-            <label for="direccionEmpresa">Dirección</label>
-            <input type="text" id="direccionEmpresa" v-model="nuevoCliente.direccionEmpresa" required />
-          </div>
-          <div class="form-group">
-            <label for="telefonoEmpresa">Teléfono</label>
-            <input type="text" id="telefonoEmpresa" v-model="nuevoCliente.telefonoEmpresa" required />
-          </div>
-          <div class="form-group">
-            <label for="correoEmpresa">Correo</label>
-            <input type="email" id="correoEmpresa" v-model="nuevoCliente.correoEmpresa" required />
-          </div>
-          <div class="form-group">
-            <label for="tipo">Tipo de Cliente</label>
-            <pv-select v-model="nuevoCliente.tipo" :options="tipo_cliente" required></pv-select>
-          </div>
-
-          <pv-button type="submit" class="btn-registrar">Registrar</pv-button>
-          <pv-button @click="cerrarModal" class="btn-cancelar">Cancelar</pv-button>
-        </form>
-      </div>
+        </template>
+      </pv-data-view>
     </div>
   </div>
 </template>
 
 <style scoped>
 .gestion-clientes-container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
+  padding: 1rem;
 }
 
 .filtros {
   display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
 }
 
-input[type="text"] {
-  padding: 8px;
-  width: 200px;
+.filtro-input {
+  flex: 1;
+  max-width: 200px;
+  padding: 0.5rem;
 }
 
-button {
-  padding: 8px 16px;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  cursor: pointer;
+.btn-buscar {
+  padding: 0.5rem 1.5rem;
+  font-size: 1rem;
 }
 
-button:hover {
-  background-color: #45a049;
-}
-
-.tabla-clientes {
+.clients-table {
   width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 20px;
 }
 
-.tabla-clientes th,
-.tabla-clientes td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
-}
-
-.tabla-clientes th {
-  background-color: #f2f2f2;
-}
-
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+.table-container {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+}
+
+.table-row {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.table-header {
+  font-weight: bold;
+  background-color: #f5f5f5;
+}
+
+.table-cell {
+  padding: 0.5rem;
+  display: flex;
   align-items: center;
 }
 
-.modal-contenido {
-  background-color: white;
-  padding: 20px;
-  border-radius: 10px;
-  width: 400px;
+.cell-label {
+  font-weight: bold;
+  margin-right: 0.5rem;
+  display: none;
 }
 
-.btn-registrar {
-  background-color: #4caf50;
-  margin-top: 10px;
-}
+@media (max-width: 768px) {
+  .table-row {
+    grid-template-columns: 1fr;
+  }
 
-.btn-cancelar {
-  background-color: #f44336;
-  margin-top: 10px;
-  margin-left: 10px;
+  .table-header {
+    display: none;
+  }
+
+  .table-cell {
+    display: flex;
+    flex-direction: row;
+    padding: 0.5rem 0;
+  }
+
+  .cell-label {
+    display: inline;
+  }
 }
 </style>

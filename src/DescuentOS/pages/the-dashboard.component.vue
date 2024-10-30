@@ -1,9 +1,13 @@
 <script>
+import NotificationUserService from '@/DescuentOS/services/notification-user.service.js'
+import { jwtDecode } from 'jwt-decode'
+import UserService from '@/DescuentOS/services/user.service.js'
 
 export default {
   name: 'the-dashboard.component',
   data() {
     return {
+      notificationes: [],
       facturas: [
         {
           numero: '001',
@@ -45,16 +49,27 @@ export default {
     goToOperaciones() {
       this.$router.push('/operations');
     },
-
+    async fetchNotificaciones(){
+      const token = localStorage.getItem('token');
+      const decoded = jwtDecode(token);
+      const username = decoded.username;
+      const rucUser = await UserService.getUserRUC(username);
+      this.notificationes = await NotificationUserService.getNotifications(rucUser);
+    }
   },
   mounted() {
-
+    this.fetchNotificaciones();
   },
 }
 </script>
 
 <template>
   <div class="dashboard-container">
+    <div class="notification-container">
+      <pv-overlay-badge :value="this.notificationes.length" severity="danger" class="inline-flex">
+        <pv-avatar class="p-overlay-badge" icon="pi pi-bell" shape="circle" size="large"></pv-avatar>
+      </pv-overlay-badge>
+    </div>
     <h1>Dashboard</h1>
     <div class="card-container">
       <pv-card class="card" @click="goToFacturas">

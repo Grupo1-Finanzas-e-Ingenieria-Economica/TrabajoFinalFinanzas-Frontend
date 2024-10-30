@@ -12,9 +12,10 @@ class BillService {
   }
 
   async getBillBySupplierRUC(ruc){
-    const response = await axios.get(BASE_URL + `factura`, {
-      params: {
-        cliente_proveedor_RUC: ruc
+    const token = localStorage.getItem('token');
+    const response = await axios.get(BASE_URL + `quma/factura/usuario/listar/${ruc}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
       }
     });
     return response.data.length > 0 ? response.data : null;
