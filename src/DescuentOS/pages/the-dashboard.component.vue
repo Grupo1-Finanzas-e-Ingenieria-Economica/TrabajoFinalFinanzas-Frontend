@@ -121,30 +121,46 @@ export default {
     <div class="facturas-section">
       <h2>Facturas Recientes</h2>
 
-      <pv-data-view :value="facturasRecientes">
-        <template #list="slotProps">
-          <div class="table-container">
-            <div class="table-row table-header">
-              <div>Numero</div>
-              <div>Monto Total</div>
-              <div>Moneda</div>
-              <div>Fecha Emisión</div>
-              <div>Fecha Vencimiento</div>
-              <div>RUC Proveedor</div>
-              <div>RUC Deudor</div>
+      <div class="table-container">
+        <pv-data-view :value="facturasRecientes">
+          <template #list="slotProps">
+            <div class="table-container">
+              <div class="table-row table-header">
+                <div>Numero</div>
+                <div>Monto Total</div>
+                <div>Moneda</div>
+                <div>Fecha Emisión</div>
+                <div>Fecha Vencimiento</div>
+                <div>RUC Proveedor</div>
+                <div>RUC Deudor</div>
+              </div>
+              <div v-for="(factura, index) in slotProps.items" :key="index" class="table-row">
+                <div class="table-cell">
+                  <span class="cell-label">Numero:</span> {{ factura.numero }}
+                </div>
+                <div class="table-cell">
+                  <span class="cell-label">Monto Total:</span> {{ formatNumber(factura.montoTotal) }}
+                </div>
+                <div class="table-cell">
+                  <span class="cell-label">Moneda:</span> {{ factura.moneda }}
+                </div>
+                <div class="table-cell">
+                  <span class="cell-label">Fecha de emisión:</span> {{ factura.fechaEmision }}
+                </div>
+                <div class="table-cell">
+                  <span class="cell-label">Fecha de vencimiento:</span> {{ factura.fechaVencimiento }}
+                </div>
+                <div class="table-cell">
+                  <span class="cell-label">RUC cliente proveedor:</span> {{ factura.rucClienteProveedor }}
+                </div>
+                <div class="table-cell">
+                  <span class="cell-label">RUC Cliente deudor:</span> {{ factura.rucClienteDeudor }}
+                </div>
+              </div>
             </div>
-            <div v-for="(factura, index) in slotProps.items" :key="index" class="table-row">
-              <div>{{ factura.numero }}</div>
-              <div>S/.{{ formatNumber(factura.montoTotal) }}</div>
-              <div>{{ factura.moneda }}</div>
-              <div>{{ factura.fechaEmision }}</div>
-              <div>{{ factura.fechaVencimiento }}</div>
-              <div>{{ factura.rucClienteProveedor }}</div>
-              <div>{{ factura.rucClienteDeudor }}</div>
-            </div>
-          </div>
-        </template>
-      </pv-data-view>
+          </template>
+        </pv-data-view>
+      </div>
     </div>
 
     <pv-dialog v-model:visible="showNotificationDialog"
@@ -198,11 +214,10 @@ h1 {
   transform: translateY(-5px);
 }
 
-.facturas-section {
-  background-color: white;
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+.table-container {
+  display: flex;
+  flex-direction: column;
 }
 
 table {
@@ -239,13 +254,6 @@ tbody tr:hover {
   right: 20px;
 }
 
-.table-container {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  overflow-x: auto;
-}
-
 .table-row {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -254,27 +262,26 @@ tbody tr:hover {
   border-bottom: 1px solid #e0e0e0;
 }
 
-.table-header{
-  font-weight: bold;
-  background-color: #f5f5f5;
-  color: #000000;
+.table-cell {
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
 }
 
-.table-row div {
-  padding: 0.5rem;
+.cell-label {
+  font-weight: bold;
+  margin-right: 0.5rem;
+  display: none;
+}
+
+.table-header {
+  font-weight: bold;
+  background-color: #f5f5f5;
 }
 
 @media (max-width: 768px) {
   .table-row {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .table-header{
-    display: none;
-  }
-
-  .table-row div:nth-child(odd) {
-    font-weight: bold;
+    grid-template-columns: 1fr;
   }
 
   .card-container {
@@ -284,6 +291,20 @@ tbody tr:hover {
 
   .card {
     width: 90%;
+  }
+
+  .table-cell {
+    display: flex;
+    flex-direction: row;
+    padding: 0.5rem 0;
+  }
+
+  .cell-label {
+    display: inline;
+  }
+
+  .table-header {
+    display: none;
   }
 }
 </style>

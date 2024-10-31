@@ -28,9 +28,6 @@ export default {
     async fetchClients() {
       this.deudores = await UserDebtorService.getDebtors();
     },
-    buscarClientes() {
-      this.fetchClients();
-    },
   },
   async mounted() {
     await this.fetchClients()
@@ -109,14 +106,6 @@ export default {
   padding: 0.5rem;
 }
 
-.btn-buscar {
-  padding: 0.5rem 1.5rem;
-  font-size: 1rem;
-}
-
-.clients-table {
-  width: 100%;
-}
 
 .table-container {
   display: flex;

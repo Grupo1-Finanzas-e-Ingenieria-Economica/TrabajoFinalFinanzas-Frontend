@@ -48,12 +48,16 @@ export default {
         <template #list="slotProps">
           <div class="table-container">
             <div class="table-row table-header">
-              <div class="table-cell">TCEA</div>
-              <div class="table-cell">Fecha</div>
+              <div>TCEA</div>
+              <div>Fecha</div>
             </div>
             <div v-for="(tcea, index) in slotProps.items" :key="index" class="table-row">
-              <div class="table-cell">{{ tcea.tcea }}%</div>
-              <div class="table-cell">{{ formatDateTime(tcea.fecha) }}</div>
+              <div class="table-cell">
+                <span class="cell-label">TCEA: </span> {{ tcea.tcea }}%
+              </div>
+              <div class="table-cell">
+                <span class="cell-label">Fecha: </span> {{ formatDateTime(tcea.fecha) }}
+              </div>
             </div>
           </div>
         </template>
@@ -75,40 +79,62 @@ h1 {
 
 .wallet-table {
   width: 100%;
-  overflow-x: auto;
+  align-content: center;
 }
 
 .table-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  display: flex;
+  flex-direction: column;
 }
+
 
 .table-header {
   font-weight: bold;
-  background-color: #4caf50;
-  color: #000000;
-  padding: 10px 0;
-  text-align: center;
+  background-color: #f5f5f5;
 }
 
 .table-row {
-  display: contents;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border-bottom: 1px solid #e0e0e0;
 }
 
 .table-cell {
-  padding: 15px 10px;
-  border-bottom: 1px solid #ddd;
-  text-align: center;
-  background-color: white;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.cell-label {
+  font-weight: bold;
+  margin-right: 0.5rem;
+  display: none;
 }
 
 @media (max-width: 768px) {
+
+  .table-header {
+    display: none;
+  }
+
+  .table-row {
+    grid-template-columns: 1fr;
+  }
+
   .table-container {
     grid-template-columns: 1fr;
   }
+
   .table-cell {
-    text-align: left;
+    display: flex;
+    flex-direction: row;
+    padding: 0.5rem 0;
+  }
+
+  .cell-label {
+    display: inline;
   }
 }
 </style>
