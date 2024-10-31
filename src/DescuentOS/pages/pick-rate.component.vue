@@ -46,6 +46,8 @@ export default {
       const operacion_factoring = await FactoringOperationService.postFactoringOperation(factoring)
 
       console.log("Response: ", operacion_factoring.data);
+
+      this.$router.push('/factoring-management');
     },
     async handleNominalRateClick(rateId) {
 
@@ -73,7 +75,7 @@ export default {
 
       console.log("Response: ", operacion_factoring.data);
 
-      this.$router.push('/bill-management');
+      this.$router.push('/factoring-management');
     }
   },
   async mounted() {
