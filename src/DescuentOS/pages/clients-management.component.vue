@@ -9,22 +9,27 @@ export default {
       filtroRuc: "",
       filtroNombre: "",
       mostrarModal: false,
-      nuevoCliente: {
-        ruc: "",
-        nombreEmpresa: "",
-        direccionEmpresa: "",
-        telefonoEmpresa: "",
-        correoEmpresa: "",
-        tipo: "Proveedor",
-      },
-      tipo_cliente: ["Proveedor", "Deudor"]
     };
+  },
+  computed: {
+    filteredDeudores() {
+      if (!this.filtroRuc && !this.filtroNombre) {
+        return this.deudores;
+      }
+
+      return this.deudores.filter(deudor => {
+        const matchesRuc = this.filtroRuc ? deudor.ruc.includes(this.filtroRuc) : true;
+        const matchesNombre = this.filtroNombre ? deudor.nombreEmpresa.toLowerCase().includes(this.filtroNombre.toLowerCase()) : true;
+        return matchesRuc && matchesNombre;
+      });
+    }
   },
   methods: {
     async fetchClients() {
       this.deudores = await UserDebtorService.getDebtors();
     },
     buscarClientes() {
+      this.fetchClients();
     },
   },
   async mounted() {
@@ -40,11 +45,10 @@ export default {
     <div class="filtros">
       <input type="text" v-model="filtroRuc" placeholder="Buscar por RUC" class="filtro-input" />
       <input type="text" v-model="filtroNombre" placeholder="Buscar por nombre" class="filtro-input" />
-      <pv-button @click="buscarClientes" class="btn-buscar">Buscar</pv-button>
     </div>
 
     <div class="clients-table">
-      <pv-data-view :value="deudores">
+      <pv-data-view :value="filteredDeudores">
         <template #list="slotProps">
           <div class="table-container">
             <div class="table-row table-header">
@@ -54,6 +58,10 @@ export default {
               <div>Teléfono Empresa</div>
               <div>Correo Empresa</div>
               <div>Fecha Registro</div>
+            </div>
+
+            <div v-if="slotProps.items.length === 0" class="no-matches">
+              No se encontraron coincidencias
             </div>
 
             <div v-for="(deudor, index) in slotProps.items" :key="index" class="table-row">

@@ -17,12 +17,6 @@ export default {
     registrarNuevaFactura() {
       this.$router.push('/register-bill');
     },
-    editarFactura(id) {
-      console.log("Id: ", id);
-    },
-    eliminarFactura(id) {
-      console.log(id)
-    },
     async fetchFacturas() {
       const token = localStorage.getItem('token');
       const decoded = jwtDecode(token);
@@ -34,6 +28,10 @@ export default {
 
       this.facturas = await BillService.getBillBySupplierRUC(rucUser);
       console.log(this.facturas);
+    },
+
+    formatNumber(value) {
+      return parseFloat(value).toFixed(2);
     }
   },
   async mounted() {
@@ -67,8 +65,8 @@ export default {
             </div>
             <div v-for="(factura, index) in slotProps.items" :key="index" class="table-row">
               <div>{{ factura.numero }}</div>
-              <div>{{ factura.montoTotal }}</div>
-              <div>{{ factura.montoTotalIgv }}</div>
+              <div>S/.{{ formatNumber(factura.montoTotal) }}</div>
+              <div>S/.{{ formatNumber(factura.montoTotalIgv) }}</div>
               <div>{{ factura.moneda }}</div>
               <div>{{ factura.fechaEmision }}</div>
               <div>{{ factura.fechaVencimiento }}</div>

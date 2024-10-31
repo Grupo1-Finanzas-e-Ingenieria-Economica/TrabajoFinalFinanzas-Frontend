@@ -1,4 +1,8 @@
 <script>
+import UserService from '@/DescuentOS/services/user.service.js'
+import OperationTceaService from '@/DescuentOS/services/operation-tcea.service.js'
+import { jwtDecode } from 'jwt-decode'
+
 export default {
   name: 'tcea-management.component',
   data() {
@@ -13,24 +17,24 @@ export default {
     };
   },
   methods: {
-    cargarTCEA() {
+    async fetchTCEA() {
+      const token = localStorage.getItem('token');
+      const decoded = jwtDecode(token);
+      const username = decoded.username;
+
+      const rucUser = await UserService.getUserRUC(username);
+
+      this.tceaList = await OperationTceaService.getTceaWalletBySupplierRUC(rucUser);
     },
-    abrirModalNuevaTCEA() {
-      this.mostrarModal = true;
-    },
-    cerrarModal() {
-      this.mostrarModal = false;
-      this.nuevaTCEA = {
-        tcea: "",
-        fecha: "",
-        rucCliente: "",
-      };
-    },
-    registrarTCEA() {
-    },
+    formatDateTime(dateTime){
+      const date = new Date(dateTime);
+      const formattedDate = date.toLocaleDateString();
+      const formattedTime = date.toLocaleTimeString();
+      return `${formattedDate} ${formattedTime}`;
+    }
   },
-  mounted() {
-    this.cargarTCEA();
+  async mounted() {
+    await this.fetchTCEA();
   }
 }
 </script>
@@ -39,90 +43,72 @@ export default {
   <div class="gestion-tcea-container">
     <h1>Gestión de TCEA (Cartera TCEA)</h1>
 
-    <table class="tabla-tcea">
-      <thead>
-      <tr>
-        <th>ID</th>
-        <th>TCEA</th>
-        <th>Fecha</th>
-        <th>RUC Cliente</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr v-for="tcea in tceaList" :key="tcea.id">
-        <td>{{ tcea.id }}</td>
-        <td>{{ tcea.tcea }}</td>
-        <td>{{ tcea.fecha }}</td>
-        <td>{{ tcea.rucCliente }}</td>
-      </tr>
-      </tbody>
-    </table>
+    <div class="wallet-table">
+      <pv-data-view :value="tceaList">
+        <template #list="slotProps">
+          <div class="table-container">
+            <div class="table-row table-header">
+              <div class="table-cell">TCEA</div>
+              <div class="table-cell">Fecha</div>
+            </div>
+            <div v-for="(tcea, index) in slotProps.items" :key="index" class="table-row">
+              <div class="table-cell">{{ tcea.tcea }}%</div>
+              <div class="table-cell">{{ formatDateTime(tcea.fecha) }}</div>
+            </div>
+          </div>
+        </template>
+      </pv-data-view>
+    </div>
   </div>
 </template>
 
 <style scoped>
 .gestion-tcea-container {
-  max-width: 800px;
-  margin: 0 auto;
   padding: 20px;
+  background-color: #f9f9f9;
 }
 
-.tabla-tcea {
-  width: 100%;
-  border-collapse: collapse;
+h1 {
+  text-align: center;
   margin-bottom: 20px;
 }
 
-.tabla-tcea th,
-.tabla-tcea td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
-}
-
-.tabla-tcea th {
-  background-color: #f2f2f2;
-}
-
-button {
-  padding: 10px 20px;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #45a049;
-}
-
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
+.wallet-table {
   width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  overflow-x: auto;
 }
 
-.modal-contenido {
-  background-color: white;
-  padding: 20px;
-  border-radius: 10px;
-  width: 400px;
+.table-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
 }
 
-.btn-registrar {
+.table-header {
+  font-weight: bold;
   background-color: #4caf50;
-  margin-top: 10px;
+  color: #000000;
+  padding: 10px 0;
+  text-align: center;
 }
 
-.btn-cancelar {
-  background-color: #f44336;
-  margin-top: 10px;
-  margin-left: 10px;
+.table-row {
+  display: contents;
+}
+
+.table-cell {
+  padding: 15px 10px;
+  border-bottom: 1px solid #ddd;
+  text-align: center;
+  background-color: white;
+}
+
+@media (max-width: 768px) {
+  .table-container {
+    grid-template-columns: 1fr;
+  }
+  .table-cell {
+    text-align: left;
+  }
 }
 </style>

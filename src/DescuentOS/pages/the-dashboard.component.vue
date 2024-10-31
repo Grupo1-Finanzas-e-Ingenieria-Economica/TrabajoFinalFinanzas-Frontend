@@ -2,40 +2,16 @@
 import NotificationUserService from '@/DescuentOS/services/notification-user.service.js'
 import { jwtDecode } from 'jwt-decode'
 import UserService from '@/DescuentOS/services/user.service.js'
+import BillService from '@/DescuentOS/services/bill.service.js'
 
 export default {
   name: 'the-dashboard.component',
   data() {
     return {
+      facturasRecientes: [],
       notificationes: [],
       unreadNotifications: [],
       cant_notificationes: 0,
-      facturas: [
-        {
-          numero: '001',
-          montoTotal: 1000,
-          moneda: 'USD',
-          fechaEmision: '2021-10-01',
-          fechaVencimiento: '2021-10-31',
-          clienteProveedor: 'Cliente 1',
-        },
-        {
-          numero: '002',
-          montoTotal: 2000,
-          moneda: 'USD',
-          fechaEmision: '2021-10-02',
-          fechaVencimiento: '2021-10-30',
-          clienteProveedor: 'Cliente 2',
-        },
-        {
-          numero: '003',
-          montoTotal: 3000,
-          moneda: 'USD',
-          fechaEmision: '2021-10-03',
-          fechaVencimiento: '2021-10-29',
-          clienteProveedor: 'Cliente 3',
-        }
-      ],
       showNotificationDialog: false
     };
   },
@@ -46,11 +22,18 @@ export default {
     goToClientesDeudores() {
       this.$router.push('/clients-management');
     },
-    goToOperaciones() {
-      this.$router.push('/operations');
+    goToTCEAWallet() {
+      this.$router.push('/tcea-management');
     },
     goToFactoring(){
       this.$router.push('/factoring-management');
+    },
+    async fetchFacturasRecientes() {
+      const token = localStorage.getItem('token');
+      const decoded = jwtDecode(token);
+      const username = decoded.username;
+      const rucUser = await UserService.getUserRUC(username);
+      this.facturasRecientes = await BillService.getRecentBills(rucUser);
     },
     async fetchNotificaciones() {
       const token = localStorage.getItem('token');
@@ -70,6 +53,9 @@ export default {
       }
       this.cant_notificationes = 0;
       this.unreadNotifications = [];
+    },
+    formatNumber(value) {
+      return parseFloat(value).toFixed(2);
     }
   },
   watch: {
@@ -81,6 +67,7 @@ export default {
   },
   mounted() {
     this.fetchNotificaciones();
+    this.fetchFacturasRecientes();
   },
 }
 </script>
@@ -121,12 +108,12 @@ export default {
         </template>
       </pv-card>
 
-      <pv-card class="card" @click="goToOperaciones">
+      <pv-card class="card" @click="goToTCEAWallet">
         <template #title>
-          <h2>Operaciones</h2>
+          <h2>Cartera TCEA</h2>
         </template>
         <template #content>
-          <p>Visualiza y gestiona tus operaciones.</p>
+          <p>Visualiza tu cartera TCEA</p>
         </template>
       </pv-card>
     </div>
@@ -134,14 +121,30 @@ export default {
     <div class="facturas-section">
       <h2>Facturas Recientes</h2>
 
-      <pv-data-table :value="facturas" tableStyle="min-width: 50rem">
-        <pv-column field="numero" header="Número"></pv-column>
-        <pv-column field="montoTotal" header="Monto Total"></pv-column>
-        <pv-column field="moneda" header="Moneda"></pv-column>
-        <pv-column field="fechaEmision" header="Fecha de Emisión"></pv-column>
-        <pv-column field="fechaVencimiento" header="Fecha de Vencimiento"></pv-column>
-        <pv-column field="clienteProveedor" header="Cliente Proveedor"></pv-column>
-      </pv-data-table>
+      <pv-data-view :value="facturasRecientes">
+        <template #list="slotProps">
+          <div class="table-container">
+            <div class="table-row table-header">
+              <div>Numero</div>
+              <div>Monto Total</div>
+              <div>Moneda</div>
+              <div>Fecha Emisión</div>
+              <div>Fecha Vencimiento</div>
+              <div>RUC Proveedor</div>
+              <div>RUC Deudor</div>
+            </div>
+            <div v-for="(factura, index) in slotProps.items" :key="index" class="table-row">
+              <div>{{ factura.numero }}</div>
+              <div>S/.{{ formatNumber(factura.montoTotal) }}</div>
+              <div>{{ factura.moneda }}</div>
+              <div>{{ factura.fechaEmision }}</div>
+              <div>{{ factura.fechaVencimiento }}</div>
+              <div>{{ factura.rucClienteProveedor }}</div>
+              <div>{{ factura.rucClienteDeudor }}</div>
+            </div>
+          </div>
+        </template>
+      </pv-data-view>
     </div>
 
     <pv-dialog v-model:visible="showNotificationDialog"
@@ -197,9 +200,9 @@ h1 {
 
 .facturas-section {
   background-color: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 table {
@@ -229,11 +232,6 @@ tbody tr:hover {
   cursor: pointer;
 }
 
-.p-overlay-badge {
-  position: absolute;
-  top: 0;
-  right: 0;
-}
 
 .notification-container {
   position: fixed;
@@ -241,7 +239,44 @@ tbody tr:hover {
   right: 20px;
 }
 
+.table-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  overflow-x: auto;
+}
+
+.table-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.table-header{
+  font-weight: bold;
+  background-color: #f5f5f5;
+  color: #000000;
+}
+
+.table-row div {
+  padding: 0.5rem;
+}
+
 @media (max-width: 768px) {
+  .table-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .table-header{
+    display: none;
+  }
+
+  .table-row div:nth-child(odd) {
+    font-weight: bold;
+  }
+
   .card-container {
     flex-direction: column;
     align-items: center;

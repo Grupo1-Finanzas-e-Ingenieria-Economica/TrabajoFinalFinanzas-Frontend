@@ -30,6 +30,16 @@ class BillService {
     });
     return response.data;
   }
+
+  async getRecentBills(ruc){
+    const token = localStorage.getItem('token');
+    const response = await axios.get(BASE_URL + `quma/factura/usuario/facturarecientes/${ruc}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    return response.data;
+  }
 }
 
 export default new BillService();
