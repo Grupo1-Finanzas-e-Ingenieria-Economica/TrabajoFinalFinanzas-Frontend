@@ -28,6 +28,10 @@ export default {
     async fetchClients() {
       this.deudores = await UserDebtorService.getDebtors();
     },
+    returnToDashboard() {
+      this.$router.push('/dashboard');
+    }
+
   },
   async mounted() {
     await this.fetchClients()
@@ -38,10 +42,14 @@ export default {
 <template>
   <div class="gestion-clientes-container">
     <h1>Gestión de Clientes (Proveedores y Deudores)</h1>
-
-    <div class="filtros">
-      <input type="text" v-model="filtroRuc" placeholder="Buscar por RUC" class="filtro-input" />
-      <input type="text" v-model="filtroNombre" placeholder="Buscar por nombre" class="filtro-input" />
+    <div class="actions-container">
+      <div class="filtros">
+        <input type="text" v-model="filtroRuc" placeholder="Buscar por RUC" class="filtro-input" />
+        <input type="text" v-model="filtroNombre" placeholder="Buscar por nombre" class="filtro-input" />
+      </div>
+      <pv-button @click="returnToDashboard" class="return-button">
+        Volver al dashboard
+      </pv-button>
     </div>
 
     <div class="clients-table">
@@ -97,7 +105,6 @@ export default {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  margin-bottom: 1rem;
 }
 
 .filtro-input {
@@ -135,6 +142,13 @@ export default {
   font-weight: bold;
   margin-right: 0.5rem;
   display: none;
+}
+
+.actions-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
 }
 
 @media (max-width: 768px) {

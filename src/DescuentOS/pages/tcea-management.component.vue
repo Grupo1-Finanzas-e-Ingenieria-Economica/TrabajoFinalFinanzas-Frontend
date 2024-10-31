@@ -17,6 +17,10 @@ export default {
     };
   },
   methods: {
+    formatInterestRate(rate) {
+      return (rate * 100).toFixed(7);
+    },
+
     async fetchTCEA() {
       const token = localStorage.getItem('token');
       const decoded = jwtDecode(token);
@@ -53,7 +57,7 @@ export default {
             </div>
             <div v-for="(tcea, index) in slotProps.items" :key="index" class="table-row">
               <div class="table-cell">
-                <span class="cell-label">TCEA: </span> {{ tcea.tcea }}%
+                <span class="cell-label">TCEA: </span> {{ formatInterestRate(tcea.tcea) }}%
               </div>
               <div class="table-cell">
                 <span class="cell-label">Fecha: </span> {{ formatDateTime(tcea.fecha) }}

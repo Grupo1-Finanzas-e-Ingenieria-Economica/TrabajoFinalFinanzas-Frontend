@@ -3,7 +3,6 @@ import NotificationUserService from '@/DescuentOS/services/notification-user.ser
 import { jwtDecode } from 'jwt-decode'
 import UserService from '@/DescuentOS/services/user.service.js'
 import BillService from '@/DescuentOS/services/bill.service.js'
-
 export default {
   name: 'the-dashboard.component',
   data() {
@@ -56,6 +55,11 @@ export default {
     },
     formatNumber(value) {
       return parseFloat(value).toFixed(2);
+    },
+
+    logOut(){
+      localStorage.clear();
+      this.$router.push('/login');
     }
   },
   watch: {
@@ -75,6 +79,9 @@ export default {
 <template>
   <div class="dashboard-container">
     <div class="notification-container">
+      <pv-button @click="logOut" class="return-button">
+        Cerrar Sesión
+      </pv-button>
       <pv-overlay-badge :value="cant_notificationes" severity="danger" class="inline-flex" @click="showNotifications">
         <pv-avatar icon="pi pi-bell" shape="circle" size="large"></pv-avatar>
       </pv-overlay-badge>
@@ -245,13 +252,16 @@ tbody tr:hover {
   display: inline-flex;
   position: relative;
   cursor: pointer;
+  margin-left: 10px;
 }
 
 
 .notification-container {
   position: fixed;
   top: 20px;
-  right: 20px;
+  right: 30px;
+  justify-content: space-between;
+
 }
 
 .table-row {
@@ -277,6 +287,11 @@ tbody tr:hover {
 .table-header {
   font-weight: bold;
   background-color: #f5f5f5;
+}
+
+.return-button {
+  padding: 10px 20px;
+  font-size: 1rem;
 }
 
 @media (max-width: 768px) {

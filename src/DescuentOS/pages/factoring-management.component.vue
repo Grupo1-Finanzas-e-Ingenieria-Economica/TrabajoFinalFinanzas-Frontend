@@ -17,6 +17,10 @@ export default {
     };
   },
   methods: {
+    formatInterestRate(rate) {
+      return (rate * 100).toFixed(7);
+    },
+
     async fetchFactoring() {
       const token = localStorage.getItem('token');
       const decoded = jwtDecode(token);
@@ -46,6 +50,10 @@ export default {
 
     formatNumber(value) {
       return parseFloat(value).toFixed(2);
+    },
+
+    returnToDashboard() {
+      this.$router.push('/dashboard');
     }
   },
   async mounted() {
@@ -57,6 +65,13 @@ export default {
 <template>
   <div class="gestion-factoring-container">
     <h1>Gestión de Operaciones de Factoring</h1>
+
+    <div class="actions-container">
+      <pv-button @click="returnToDashboard" class="return-button">
+        Volver al dashboard
+      </pv-button>
+    </div>
+
     <div class="factoring-table">
       <pv-data-view :value="operacionesList">
         <template #list="slotProps">
@@ -71,7 +86,7 @@ export default {
             </div>
             <div v-for="(factoring, index) in slotProps.items" :key="index" class="table-row">
               <div>{{ formatDateTime(factoring.fechaOperacion) }}</div>
-              <div>{{ factoring.tasaInteresAplicada }}%</div>
+              <div>{{ formatInterestRate(factoring.tasaInteresAplicada) }}%</div>
               <div>S/.{{ formatNumber(factoring.montoDescuento) }}</div>
               <div>S/.{{ formatNumber(factoring.montoPago) }}</div>
               <div><pv-button @click="getBillById(factoring.idFactura)" label="Factura"/></div>
@@ -97,7 +112,7 @@ export default {
 
     <pv-dialog v-model:visible="showTceaDialog" header="Detalles de la TCEA" :modal="true" :closable="true">
       <div v-if="selectedTcea" class="tcea-details">
-        <div class="detail-row"><strong>TCEA:</strong> {{ selectedTcea.tcea }}</div>
+        <div class="detail-row"><strong>TCEA:</strong> {{ formatInterestRate(selectedTcea.tcea) }}%</div>
         <div class="detail-row"><strong>Fecha:</strong> {{ formatDateTime(selectedTcea.fecha) }}</div>
       </div>
     </pv-dialog>
@@ -147,6 +162,13 @@ export default {
 
 .detail-row {
   margin-bottom: 0.5rem;
+}
+
+.actions-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
 }
 
 @media (max-width: 768px) {

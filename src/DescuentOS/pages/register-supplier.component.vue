@@ -33,13 +33,11 @@ export default {
 
       const response = await UserSupplierService.registerUserSupplier(user);
 
-      localStorage.clear();
+      localStorage.setItem('userId', '');
+
       console.log(response.data);
-      this.$router.push('/login');
-    },
-    goToLogin() {
-      this.$router.push('/login');
-    },
+      this.$router.push('/dashboard');
+    }
   },
 }
 </script>
@@ -83,7 +81,6 @@ export default {
           </div>
           <pv-button type="submit" class="btn">Registrarse</pv-button>
         </form>
-        <pv-button @click="goToLogin" class="btn-link">¿Ya tienes una cuenta? Inicia sesión</pv-button>
       </div>
     </div>
   </div>

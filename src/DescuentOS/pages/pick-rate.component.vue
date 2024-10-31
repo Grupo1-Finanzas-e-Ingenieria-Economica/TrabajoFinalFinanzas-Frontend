@@ -3,16 +3,30 @@ import NominalRateService from '@/DescuentOS/services/nominal-rate.service.js';
 import EffectiveRateService from '@/DescuentOS/services/effective-rate.service.js';
 import DiscountService from '@/DescuentOS/services/discount.service.js'
 import FactoringOperationService from '@/DescuentOS/services/factoring-operation.service.js'
+import Swal from "sweetalert2";
 
 export default {
   name: 'pick-rate.component',
   data() {
     return {
       tasa_nominal: [],
-      tasa_efectiva: []
+      tasa_efectiva: [],
+      selectedRate: false
     };
   },
   methods: {
+
+    formatInterestRate(rate) {
+      return (rate * 100).toFixed(7);
+    },
+
+    checkRateSelection(event) {
+      if (!this.selectedRate) {
+        event.preventDefault();
+        event.returnValue = '';
+      }
+    },
+
     async fetchRates() {
       this.tasa_nominal = await NominalRateService.getNominalRate();
       console.log(this.tasa_nominal);
@@ -25,7 +39,7 @@ export default {
     },
 
     async handleEffectiveRateClick(rateId) {
-
+      this.selectedRate = true;
       const discount = {
         fecha: "",
         idComision: 1,
@@ -50,8 +64,7 @@ export default {
       this.$router.push('/factoring-management');
     },
     async handleNominalRateClick(rateId) {
-
-
+      this.selectedRate = true;
       const discount = {
         fecha: "",
         idComision: 1,
@@ -80,6 +93,23 @@ export default {
   },
   async mounted() {
     await this.fetchRates();
+    window.addEventListener('beforeunload', this.checkRateSelection);
+    this.$router.beforeEach((to, from, next) => {
+      if (!this.selectedRate) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Advertencia',
+          text: 'Debe seleccionar una tasa antes de salir.',
+          confirmButtonText: 'OK'
+        });
+        next(false);
+      } else {
+        next();
+      }
+    });
+  },
+  beforeUnmount() {
+    window.removeEventListener('beforeunload', this.checkRateSelection);
   }
 }
 </script>
@@ -89,21 +119,21 @@ export default {
     <h2>Nominal Rates</h2>
     <div class="rate-grid">
       <pv-card v-for="tasa in tasa_nominal" :key="tasa.id" @click="handleNominalRateClick(tasa.id)">
-        <template #title>{{ tasa.tasaInteres }}%</template>
+        <template #title>{{ formatInterestRate(tasa.tasaInteres) }}%</template>
         <template #content>
           <h3>Plazo: {{ tasa.plazo }}</h3>
           <p>Capitalizacion {{ tasa.capitalizable }}</p>
-          <p>Fecha inicio: {{formatDateTime(tasa.fechaInicio)}}</p>
-          <p>Fecha_fin: {{formatDateTime(tasa.fechaFin)}}</p>
+          <p>Fecha inicio: {{ formatDateTime(tasa.fechaInicio) }}</p>
+          <p>Fecha_fin: {{ formatDateTime(tasa.fechaFin) }}</p>
         </template>
       </pv-card>
     </div>
     <h2>Effective Rates</h2>
     <div class="rate-grid">
       <pv-card v-for="tasa in tasa_efectiva" :key="tasa.id" @click="handleEffectiveRateClick(tasa.id)">
-        <template #title>{{ tasa.tasaInteres }}%</template>
+        <template #title>{{ formatInterestRate(tasa.tasaInteres) }}%</template>
         <template #content>
-          <h3>Plazo: {{ tasa.plazo }}</h3>
+          <h3>Plazo: {{ (tasa.plazo) }}</h3>
           <p>Fecha inicio: {{ formatDateTime(tasa.fechaInicio) }}</p>
           <p>Fecha_fin: {{ formatDateTime(tasa.fechaFin) }}</p>
         </template>
