@@ -15,7 +15,6 @@ export default {
     };
   },
   methods: {
-
     formatInterestRate(rate) {
       return (rate * 100).toFixed(7);
     },

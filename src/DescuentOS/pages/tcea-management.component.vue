@@ -35,6 +35,9 @@ export default {
       const formattedDate = date.toLocaleDateString();
       const formattedTime = date.toLocaleTimeString();
       return `${formattedDate} ${formattedTime}`;
+    },
+    returnToDashboard() {
+      this.$router.push('/dashboard');
     }
   },
   async mounted() {
@@ -47,6 +50,9 @@ export default {
   <div class="gestion-tcea-container">
     <h1>Gestión de TCEA (Cartera TCEA)</h1>
 
+    <pv-button @click="returnToDashboard" class="return-button">
+      Volver al dashboard
+    </pv-button>
     <div class="wallet-table">
       <pv-data-view :value="tceaList">
         <template #list="slotProps">
@@ -115,6 +121,11 @@ h1 {
   font-weight: bold;
   margin-right: 0.5rem;
   display: none;
+}
+
+.return-button {
+  padding: 10px 20px;
+  font-size: 1rem;
 }
 
 @media (max-width: 768px) {
