@@ -57,33 +57,6 @@ export default {
       </tr>
       </tbody>
     </table>
-
-    <pv-button class="btn-nueva-tcea" @click="abrirModalNuevaTCEA">
-      Agregar Nueva TCEA
-    </pv-button>
-
-    <div v-if="mostrarModal" class="modal">
-      <div class="modal-contenido">
-        <h2>Registrar Nueva TCEA</h2>
-        <form @submit.prevent="registrarTCEA">
-          <div class="form-group">
-            <label for="tcea">TCEA (%)</label>
-            <input type="number" id="tcea" v-model="nuevaTCEA.tcea" required />
-          </div>
-          <div class="form-group">
-            <label for="fecha">Fecha</label>
-            <input type="date" id="fecha" v-model="nuevaTCEA.fecha" required />
-          </div>
-          <div class="form-group">
-            <label for="rucCliente">RUC Cliente</label>
-            <input type="text" id="rucCliente" v-model="nuevaTCEA.rucCliente" required />
-          </div>
-
-          <pv-button type="submit" class="btn-registrar">Registrar</pv-button>
-          <pv-button @click="cerrarModal" class="btn-cancelar">Cancelar</pv-button>
-        </form>
-      </div>
-    </div>
   </div>
 </template>
 

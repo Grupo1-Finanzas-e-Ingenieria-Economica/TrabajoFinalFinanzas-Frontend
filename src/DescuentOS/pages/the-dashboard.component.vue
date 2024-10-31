@@ -8,6 +8,8 @@ export default {
   data() {
     return {
       notificationes: [],
+      unreadNotifications: [],
+      cant_notificationes: 0,
       facturas: [
         {
           numero: '001',
@@ -34,6 +36,7 @@ export default {
           clienteProveedor: 'Cliente 3',
         }
       ],
+      showNotificationDialog: false
     };
   },
   methods: {
@@ -43,18 +46,37 @@ export default {
     goToClientesDeudores() {
       this.$router.push('/clients-management');
     },
-    goToProveedores() {
-      this.$router.push('/proveedores');
-    },
     goToOperaciones() {
       this.$router.push('/operations');
     },
-    async fetchNotificaciones(){
+    goToFactoring(){
+      this.$router.push('/factoring-management');
+    },
+    async fetchNotificaciones() {
       const token = localStorage.getItem('token');
       const decoded = jwtDecode(token);
       const username = decoded.username;
       const rucUser = await UserService.getUserRUC(username);
       this.notificationes = await NotificationUserService.getNotifications(rucUser);
+      this.unreadNotifications = this.notificationes.filter(notification => !notification.leido);
+      this.cant_notificationes = this.unreadNotifications.length;
+    },
+    showNotifications() {
+      this.showNotificationDialog = true;
+    },
+    async markNotificationsAsRead() {
+      for (const notification of this.unreadNotifications) {
+        await NotificationUserService.readNotifications(parseInt(notification.id));
+      }
+      this.cant_notificationes = 0;
+      this.unreadNotifications = [];
+    }
+  },
+  watch: {
+    showNotificationDialog(newValue) {
+      if (!newValue) {
+        this.markNotificationsAsRead();
+      }
     }
   },
   mounted() {
@@ -66,8 +88,8 @@ export default {
 <template>
   <div class="dashboard-container">
     <div class="notification-container">
-      <pv-overlay-badge :value="this.notificationes.length" severity="danger" class="inline-flex">
-        <pv-avatar class="p-overlay-badge" icon="pi pi-bell" shape="circle" size="large"></pv-avatar>
+      <pv-overlay-badge :value="cant_notificationes" severity="danger" class="inline-flex" @click="showNotifications">
+        <pv-avatar icon="pi pi-bell" shape="circle" size="large"></pv-avatar>
       </pv-overlay-badge>
     </div>
     <h1>Dashboard</h1>
@@ -90,12 +112,12 @@ export default {
         </template>
       </pv-card>
 
-      <pv-card class="card" @click="goToProveedores">
+      <pv-card class="card" @click="goToFactoring">
         <template #title>
-          <h2>Proveedores</h2>
+          <h2>Operaciones de Factoring</h2>
         </template>
         <template #content>
-          <p>Gestiona la información de tus proveedores.</p>
+          <p>Visualiza tus operaciones de factoring</p>
         </template>
       </pv-card>
 
@@ -121,6 +143,21 @@ export default {
         <pv-column field="clienteProveedor" header="Cliente Proveedor"></pv-column>
       </pv-data-table>
     </div>
+
+    <pv-dialog v-model:visible="showNotificationDialog"
+               header="Notificaciones"
+               :modal="true"
+               :closable="true"
+               :width="'260vw'"
+               :height="'270vh'"
+    >
+      <ul>
+        <li v-for="notification in unreadNotifications" :key="notification.id">
+          {{ notification.mensaje }}
+        </li>
+      </ul>
+      <v-if v-show="unreadNotifications.length === 0">No hay notificaciones</v-if>
+    </pv-dialog>
   </div>
 </template>
 
@@ -184,6 +221,24 @@ th {
 
 tbody tr:hover {
   background-color: #f1f1f1;
+}
+
+.inline-flex {
+  display: inline-flex;
+  position: relative;
+  cursor: pointer;
+}
+
+.p-overlay-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.notification-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
 }
 
 @media (max-width: 768px) {

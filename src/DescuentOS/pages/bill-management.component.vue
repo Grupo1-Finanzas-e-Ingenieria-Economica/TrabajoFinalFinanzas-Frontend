@@ -17,15 +17,12 @@ export default {
     registrarNuevaFactura() {
       this.$router.push('/register-bill');
     },
-
     editarFactura(id) {
       console.log("Id: ", id);
     },
-
     eliminarFactura(id) {
       console.log(id)
     },
-
     async fetchFacturas() {
       const token = localStorage.getItem('token');
       const decoded = jwtDecode(token);

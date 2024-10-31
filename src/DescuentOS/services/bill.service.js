@@ -20,6 +20,16 @@ class BillService {
     });
     return response.data.length > 0 ? response.data : null;
   }
+
+  async getBillById(id){
+    const token = localStorage.getItem('token');
+    const response = await axios.get(BASE_URL + `quma/factura/usuario/facturaid/${id}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    return response.data;
+  }
 }
 
 export default new BillService();

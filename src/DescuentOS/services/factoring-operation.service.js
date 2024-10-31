@@ -10,6 +10,16 @@ class FactoringOperationService {
       }
     });
   }
+
+  async getFactoringOperationByRUC(ruc){
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}quma/operacionfactoring/usuario/operacionesusuario/${ruc}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    return response.data;
+  }
 }
 
 export default new FactoringOperationService();

@@ -4,6 +4,7 @@ import router from './router'
 import PrimeVue from "primevue/config";
 import "primeicons/primeicons.css";
 import Toolbar from 'primevue/toolbar'
+import OrderList from 'primevue/orderlist'
 import OverlayBadge from 'primevue/overlaybadge'
 import Avatar from 'primevue/avatar'
 import InputText from "primevue/inputtext";
@@ -19,6 +20,7 @@ import CascadeSelect from 'primevue/cascadeselect'
 import SelectButton from 'primevue/selectbutton'
 import Select from 'primevue/select'
 import DatePicker from 'primevue/datepicker'
+import Dialog from 'primevue/dialog';
 import Aura from "@primevue/themes/aura";
 import "./resources/primevue-sass-theme-main/themes/aura/aura-light/green/theme.scss";
 
@@ -47,5 +49,7 @@ app.component('pv-cascade-select', CascadeSelect)
 app.component('pv-select-button', SelectButton)
 app.component('pv-select', Select)
 app.component('pv-date-picker', DatePicker)
+app.component('pv-order-list', OrderList)
+app.component('pv-dialog', Dialog)
 
 app.mount('#app')
