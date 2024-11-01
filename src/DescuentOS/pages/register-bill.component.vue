@@ -35,7 +35,7 @@ export default {
       console.log("RUC del usuario: " + rucUser);
 
       const nueva_factura = {
-          numero: parseInt(this.factura.numero),
+          numero: this.factura.numero,
           montoTotal: 0,
           montoTotalIgv: parseFloat(this.factura.montoTotalIgv),
           moneda: this.factura.moneda,
@@ -44,6 +44,10 @@ export default {
           rucClienteProveedor: rucUser,
           rucClienteDeudor: this.factura.rucClienteDeudor,
       }
+
+      localStorage.setItem('moneda', this.factura.moneda);
+
+      console.log("Moneda seleccionada: " + localStorage.getItem('moneda'));
 
       console.log(nueva_factura);
 

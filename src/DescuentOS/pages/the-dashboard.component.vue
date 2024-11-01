@@ -3,6 +3,7 @@ import NotificationUserService from '@/DescuentOS/services/notification-user.ser
 import { jwtDecode } from 'jwt-decode'
 import UserService from '@/DescuentOS/services/user.service.js'
 import BillService from '@/DescuentOS/services/bill.service.js'
+
 export default {
   name: 'the-dashboard.component',
   data() {
@@ -11,78 +12,99 @@ export default {
       notificationes: [],
       unreadNotifications: [],
       cant_notificationes: 0,
-      showNotificationDialog: false
-    };
+      nombre_usuario: '',
+      showNotificationDialog: false,
+    }
   },
   methods: {
     goToFacturas() {
-      this.$router.push('/bill-management');
+      this.$router.push('/bill-management')
     },
     goToClientesDeudores() {
-      this.$router.push('/clients-management');
+      this.$router.push('/clients-management')
     },
     goToTCEAWallet() {
-      this.$router.push('/tcea-management');
+      this.$router.push('/tcea-management')
     },
-    goToFactoring(){
-      this.$router.push('/factoring-management');
+    goToFactoring() {
+      this.$router.push('/factoring-management')
+    },
+    async fetchName() {
+      const token = localStorage.getItem('token')
+      const decoded = jwtDecode(token)
+      this.nombre_usuario = decoded.username
     },
     async fetchFacturasRecientes() {
-      const token = localStorage.getItem('token');
-      const decoded = jwtDecode(token);
-      const username = decoded.username;
-      const rucUser = await UserService.getUserRUC(username);
-      this.facturasRecientes = await BillService.getRecentBills(rucUser);
+      const token = localStorage.getItem('token')
+      const decoded = jwtDecode(token)
+      const username = decoded.username
+      const rucUser = await UserService.getUserRUC(username)
+      this.facturasRecientes = await BillService.getRecentBills(rucUser)
     },
     async fetchNotificaciones() {
-      const token = localStorage.getItem('token');
-      const decoded = jwtDecode(token);
-      const username = decoded.username;
-      const rucUser = await UserService.getUserRUC(username);
-      this.notificationes = await NotificationUserService.getNotifications(rucUser);
-      this.unreadNotifications = this.notificationes.filter(notification => !notification.leido);
-      this.cant_notificationes = this.unreadNotifications.length;
+      const token = localStorage.getItem('token')
+      const decoded = jwtDecode(token)
+      const username = decoded.username
+      const rucUser = await UserService.getUserRUC(username)
+      this.notificationes =
+        await NotificationUserService.getNotifications(rucUser)
+      this.unreadNotifications = this.notificationes.filter(
+        notification => !notification.leido,
+      )
+      this.cant_notificationes = this.unreadNotifications.length
     },
     showNotifications() {
-      this.showNotificationDialog = true;
+      this.showNotificationDialog = true
     },
     async markNotificationsAsRead() {
       for (const notification of this.unreadNotifications) {
-        await NotificationUserService.readNotifications(parseInt(notification.id));
+        await NotificationUserService.readNotifications(
+          parseInt(notification.id),
+        )
       }
-      this.cant_notificationes = 0;
-      this.unreadNotifications = [];
+      this.cant_notificationes = 0
+      this.unreadNotifications = []
     },
     formatNumber(value) {
-      return parseFloat(value).toFixed(2);
+      return parseFloat(value).toFixed(2)
     },
 
-    logOut(){
-      localStorage.clear();
-      this.$router.push('/login');
-    }
+    logOut() {
+      localStorage.clear()
+      this.$router.push('/login')
+    },
   },
   watch: {
     showNotificationDialog(newValue) {
       if (!newValue) {
-        this.markNotificationsAsRead();
+        this.markNotificationsAsRead()
       }
-    }
+    },
   },
   mounted() {
-    this.fetchNotificaciones();
-    this.fetchFacturasRecientes();
+    this.fetchNotificaciones()
+    this.fetchFacturasRecientes()
+    this.fetchName()
   },
 }
 </script>
 
 <template>
   <div class="dashboard-container">
+    <div class="welcome-container">
+      <h1>Bienvenido, {{ nombre_usuario }}</h1>
+    </div>
+
     <div class="notification-container">
       <pv-button @click="logOut" class="return-button">
         Cerrar Sesión
       </pv-button>
-      <pv-overlay-badge :value="cant_notificationes" severity="danger" class="inline-flex" @click="showNotifications">
+      <pv-overlay-badge
+        :value="cant_notificationes"
+        severity="danger"
+        class="inline-flex"
+        @click="showNotifications"
+      >
         <pv-avatar icon="pi pi-bell" shape="circle" size="large"></pv-avatar>
       </pv-overlay-badge>
     </div>
@@ -141,27 +163,36 @@ export default {
                 <div>RUC Proveedor</div>
                 <div>RUC Deudor</div>
               </div>
-              <div v-for="(factura, index) in slotProps.items" :key="index" class="table-row">
+              <div
+                v-for="(factura, index) in slotProps.items"
+                :key="index"
+                class="table-row"
+              >
                 <div class="table-cell">
                   <span class="cell-label">Numero:</span> {{ factura.numero }}
                 </div>
                 <div class="table-cell">
-                  <span class="cell-label">Monto Total:</span> {{ formatNumber(factura.montoTotal) }}
+                  <span class="cell-label">Monto Total:</span>
+                  {{ formatNumber(factura.montoTotal) }}
                 </div>
                 <div class="table-cell">
                   <span class="cell-label">Moneda:</span> {{ factura.moneda }}
                 </div>
                 <div class="table-cell">
-                  <span class="cell-label">Fecha de emisión:</span> {{ factura.fechaEmision }}
+                  <span class="cell-label">Fecha de emisión:</span>
+                  {{ factura.fechaEmision }}
                 </div>
                 <div class="table-cell">
-                  <span class="cell-label">Fecha de vencimiento:</span> {{ factura.fechaVencimiento }}
+                  <span class="cell-label">Fecha de vencimiento:</span>
+                  {{ factura.fechaVencimiento }}
                 </div>
                 <div class="table-cell">
-                  <span class="cell-label">RUC cliente proveedor:</span> {{ factura.rucClienteProveedor }}
+                  <span class="cell-label">RUC cliente proveedor:</span>
+                  {{ factura.rucClienteProveedor }}
                 </div>
                 <div class="table-cell">
-                  <span class="cell-label">RUC Cliente deudor:</span> {{ factura.rucClienteDeudor }}
+                  <span class="cell-label">RUC Cliente deudor:</span>
+                  {{ factura.rucClienteDeudor }}
                 </div>
               </div>
             </div>
@@ -170,24 +201,33 @@ export default {
       </div>
     </div>
 
-    <pv-dialog v-model:visible="showNotificationDialog"
-               header="Notificaciones"
-               :modal="true"
-               :closable="true"
-               :width="'260vw'"
-               :height="'270vh'"
+    <pv-dialog
+      v-model:visible="showNotificationDialog"
+      header="Notificaciones"
+      :modal="true"
+      :closable="true"
+      :width="'260vw'"
+      :height="'270vh'"
     >
       <ul>
         <li v-for="notification in unreadNotifications" :key="notification.id">
           {{ notification.mensaje }}
         </li>
       </ul>
-      <v-if v-show="unreadNotifications.length === 0">No hay notificaciones</v-if>
+      <v-if v-show="unreadNotifications.length === 0"
+        >No hay notificaciones</v-if
+      >
     </pv-dialog>
   </div>
 </template>
 
 <style scoped>
+
+.welcome-container {
+  display: flex;
+  justify-content: center;
+}
+
 .dashboard-container {
   padding: 20px;
   background-color: #f4f7fa;
@@ -221,7 +261,6 @@ h1 {
   transform: translateY(-5px);
 }
 
-
 .table-container {
   display: flex;
   flex-direction: column;
@@ -233,7 +272,8 @@ table {
   margin-top: 10px;
 }
 
-th, td {
+th,
+td {
   padding: 10px;
   text-align: left;
   border-bottom: 1px solid #ddd;
@@ -255,13 +295,11 @@ tbody tr:hover {
   margin-left: 10px;
 }
 
-
 .notification-container {
   position: fixed;
   top: 20px;
   right: 30px;
   justify-content: space-between;
-
 }
 
 .table-row {

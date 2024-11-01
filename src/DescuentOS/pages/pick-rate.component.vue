@@ -3,6 +3,7 @@ import NominalRateService from '@/DescuentOS/services/nominal-rate.service.js';
 import EffectiveRateService from '@/DescuentOS/services/effective-rate.service.js';
 import DiscountService from '@/DescuentOS/services/discount.service.js'
 import FactoringOperationService from '@/DescuentOS/services/factoring-operation.service.js'
+import CommissionService from "@/DescuentOS/services/commission.service.js";
 import Swal from "sweetalert2";
 
 export default {
@@ -39,9 +40,14 @@ export default {
 
     async handleEffectiveRateClick(rateId) {
       this.selectedRate = true;
+
+      const currency = localStorage.getItem('moneda');
+
+      const idComision = await CommissionService.getCommissionIdByCurrency(currency);
+
       const discount = {
         fecha: "",
-        idComision: 1,
+        idComision: idComision,
         idTasaNominal: 0,
         idTasaEfectiva: parseInt(rateId),
       }
@@ -64,9 +70,14 @@ export default {
     },
     async handleNominalRateClick(rateId) {
       this.selectedRate = true;
+
+      const currency = localStorage.getItem('moneda');
+
+      const idComision = await CommissionService.getCommissionIdByCurrency(currency);
+
       const discount = {
         fecha: "",
-        idComision: 1,
+        idComision: idComision,
         idTasaNominal: parseInt(rateId),
         idTasaEfectiva: 0,
       }
