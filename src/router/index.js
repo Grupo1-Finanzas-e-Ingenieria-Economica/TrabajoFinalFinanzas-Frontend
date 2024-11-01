@@ -32,12 +32,14 @@ const router = createRouter({
     {
       path: '/register-supplier',
       name: 'register-supplier',
-      component: RegisterSupplierComponent
+      component: RegisterSupplierComponent,
+      meta: {requiresAuth: true, noBackAfterRegister: true}
     },
     {
       path: '/dashboard',
       name: 'dashboard',
-      component: TheDashboardComponent
+      component: TheDashboardComponent,
+      meta: { requiresAuth: true }
     },
     {
       path: '/bill-management',
@@ -80,6 +82,27 @@ const router = createRouter({
       component: PickRateComponent
     }
   ]
-})
+});
+
+
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('token');
+  if (to.meta.requiresAuth && !token) {
+    return next({ name: 'login' });
+  }
+  if (to.name === 'login' && token) {
+    return next({ name: 'dashboard' });
+  }
+  next();
+});
+
+router.afterEach((to,) => {
+  if (to.meta.noBackAfterRegister) {
+    window.history.pushState(null, '', window.location.href);
+    window.onpopstate = () => {
+      router.push({ name: 'dashboard' });
+    };
+  }
+});
 
 export default router
