@@ -1,7 +1,12 @@
 <script>
+import Swal from 'sweetalert2';
 import { jwtDecode } from 'jwt-decode';
-import BillService from '@/DescuentOS/services/bill.service.js'
-import UserService from '@/DescuentOS/services/user.service.js'
+import BillService from '@/DescuentOS/services/bill.service.js';
+import UserService from '@/DescuentOS/services/user.service.js';
+import CommissionService from "@/DescuentOS/services/commission.service.js";
+import DiscountService from "@/DescuentOS/services/discount.service.js";
+import FactoringOperationService from "@/DescuentOS/services/factoring-operation.service.js";
+import EffectiveRateService from "@/DescuentOS/services/effective-rate.service.js";
 
 export default {
   name: 'register-bill.component',
@@ -17,45 +22,80 @@ export default {
         rucClienteDeudor: '',
       },
       monedas: ['PEN', 'USD'],
-
-
     };
   },
   methods: {
-
     async guardarFactura() {
       const token = localStorage.getItem('token');
       const decoded = jwtDecode(token);
       const username = decoded.username;
 
-      console.log("Id del usuario: " + username)
+      console.log("Id del usuario: " + username);
 
       const rucUser = await UserService.getUserRUC(username);
 
       console.log("RUC del usuario: " + rucUser);
 
       const nueva_factura = {
-          numero: this.factura.numero,
-          montoTotal: 0,
-          montoTotalIgv: parseFloat(this.factura.montoTotalIgv),
-          moneda: this.factura.moneda,
-          fechaEmision: this.factura.fechaEmision,
-          fechaVencimiento: this.factura.fechaVencimiento,
-          rucClienteProveedor: rucUser,
-          rucClienteDeudor: this.factura.rucClienteDeudor,
-      }
+        numero: this.factura.numero,
+        montoTotal: 0,
+        montoTotalIgv: parseFloat(this.factura.montoTotalIgv),
+        moneda: this.factura.moneda,
+        fechaEmision: this.factura.fechaEmision,
+        fechaVencimiento: this.factura.fechaVencimiento,
+        rucClienteProveedor: rucUser,
+        rucClienteDeudor: this.factura.rucClienteDeudor,
+      };
 
-      localStorage.setItem('moneda', this.factura.moneda);
+      const facturaId = await BillService.postBill(nueva_factura);
 
-      console.log("Moneda seleccionada: " + localStorage.getItem('moneda'));
+      const tasa_efectiva = await EffectiveRateService.getEffectiveRate();
+      const tasa = tasa_efectiva[0];
 
-      console.log(nueva_factura);
+      Swal.fire({
+        title: 'Confirmación de Tasa',
+        html: `
+          <p><strong>Tasa de Interés:</strong> ${tasa.tasaInteres}</p>
+          <p><strong>Plazo:</strong> ${tasa.plazo}</p>
+          <p><strong>Fecha de Inicio:</strong> ${tasa.fechaInicio}</p>
+          <p><strong>Fecha de Fin:</strong> ${tasa.fechaFin}</p>
+          <p>¿Desea continuar?</p>
+        `,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Sí',
+        cancelButtonText: 'No'
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          const idComision = await CommissionService.getCommissionIdByCurrency(this.factura.moneda);
 
-      const response = await BillService.postBill(nueva_factura);
+          const discount = {
+            fecha: "",
+            idComision: idComision,
+            idTasaNominal: 0,
+            idTasaEfectiva: tasa.id,
+          };
 
-      localStorage.setItem('factura', response.data);
+          console.log('Discount: ', discount);
 
-      this.$router.push('/pick-rate');
+          const discountId = await DiscountService.postDiscount(discount);
+
+          const factoring = {
+            idDescuento: discountId.data,
+            idFactura: facturaId.data
+          };
+
+          console.log('Factoring: ', factoring);
+
+          const operacion_factoring = await FactoringOperationService.postFactoringOperation(factoring);
+
+          console.log("Response: ", operacion_factoring.data);
+
+          this.$router.push('/factoring-management');
+        } else {
+          this.$router.push('/bill-management');
+        }
+      });
     },
   },
 }
