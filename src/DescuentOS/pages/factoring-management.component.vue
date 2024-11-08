@@ -124,12 +124,12 @@ export default {
               <div class="table-cell">
                 <span class="cell-label">Valor Entregado: </span>{{factoring.valorEntregado}}
               </div>
-              <!--<div>
+              <div>
                 <pv-button
                   @click="getBillById(factoring.idFactura)"
                   label="Factura"
                 />
-              </div>-->
+              </div>
               <div>
                 <pv-button
                   @click="getTceaByFactoring(factoring.id)"

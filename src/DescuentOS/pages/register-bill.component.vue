@@ -25,6 +25,21 @@ export default {
     };
   },
   methods: {
+    formatInterestRate(rate) {
+      return (rate * 100).toFixed(7)
+    },
+
+    formatDateTime(dateTime) {
+      const date = new Date(dateTime)
+      const formattedDate = date.toLocaleDateString()
+      const formattedTime = date.toLocaleTimeString()
+      return `${formattedDate} ${formattedTime}`
+    },
+
+    formatNumber(value) {
+      return parseFloat(value).toFixed(2)
+    },
+
     async guardarFactura() {
       const token = localStorage.getItem('token');
       const decoded = jwtDecode(token);
@@ -52,13 +67,23 @@ export default {
       const tasa_efectiva = await EffectiveRateService.getEffectiveRate();
       const tasa = tasa_efectiva[0];
 
+      const idComision = await CommissionService.getCommissionIdByCurrency(this.factura.moneda);
+
+      const comision = await CommissionService.getFullCommissionByCurrency(this.factura.moneda);
+
       Swal.fire({
         title: 'Confirmación de Tasa',
         html: `
-          <p><strong>Tasa de Interés:</strong> ${tasa.tasaInteres}</p>
+          <p><strong>Tasa de Interés:</strong> ${this.formatInterestRate(tasa.tasaInteres)}%</p>
           <p><strong>Plazo:</strong> ${tasa.plazo}</p>
-          <p><strong>Fecha de Inicio:</strong> ${tasa.fechaInicio}</p>
-          <p><strong>Fecha de Fin:</strong> ${tasa.fechaFin}</p>
+          <p><strong>Fecha de Inicio:</strong> ${this.formatDateTime(tasa.fechaInicio)}</p>
+          <p><strong>Fecha de Fin:</strong> ${this.formatDateTime(tasa.fechaFin)}</p>
+          <p><strong>Comision </strong></p>
+          <p><strong>Estudio Riesgo: </strong> S/.${this.formatNumber(comision.estudioRiesgo)}</p>
+          <p><strong>Seguro de Degravamen: </strong> ${this.formatInterestRate(comision.seguroDesgravamen)}%</p>
+          <p><strong>Foto copias: </strong>  S/.${this.formatNumber(comision.fotoCopias)}</p>
+          <p><strong>Gastos administrativos: </strong> S/.${this.formatNumber(comision.gastoAdministracion)}</p>
+          <p><strong>Portes: </strong> S/.${this.formatNumber(comision.porte)}</p>
           <p>¿Desea continuar?</p>
         `,
         icon: 'question',
@@ -67,7 +92,6 @@ export default {
         cancelButtonText: 'No'
       }).then(async (result) => {
         if (result.isConfirmed) {
-          const idComision = await CommissionService.getCommissionIdByCurrency(this.factura.moneda);
 
           const discount = {
             fecha: "",
