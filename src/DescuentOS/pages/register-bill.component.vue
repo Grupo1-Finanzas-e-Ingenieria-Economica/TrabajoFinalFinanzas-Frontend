@@ -7,6 +7,7 @@ import CommissionService from "@/DescuentOS/services/commission.service.js";
 import DiscountService from "@/DescuentOS/services/discount.service.js";
 import FactoringOperationService from "@/DescuentOS/services/factoring-operation.service.js";
 import EffectiveRateService from "@/DescuentOS/services/effective-rate.service.js";
+import UserDebtorService from "@/DescuentOS/services/user-debtor.service.js";
 
 export default {
   name: 'register-bill.component',
@@ -21,10 +22,16 @@ export default {
         rucClienteProveedor: '',
         rucClienteDeudor: '',
       },
+      deudores: [],
       monedas: ['PEN', 'USD'],
     };
   },
   methods: {
+
+    async getClients() {
+      this.deudores = await UserDebtorService.getDebtors();
+    },
+
     formatInterestRate(rate) {
       return (rate * 100).toFixed(7)
     },
@@ -41,6 +48,26 @@ export default {
     },
 
     async guardarFactura() {
+
+      if (!this.factura.numero || !this.factura.montoTotalIgv || !this.factura.fechaEmision || !this.factura.fechaVencimiento || !this.factura.rucClienteDeudor) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Todos los campos deben estar llenos.',
+        });
+        return;
+      }
+
+      const rucExists = this.deudores.some(deudor => deudor.ruc === this.factura.rucClienteDeudor);
+      if (!rucExists) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'El RUC del cliente deudor no existe.',
+        });
+        return;
+      }
+
       const token = localStorage.getItem('token');
       const decoded = jwtDecode(token);
       const username = decoded.username;
@@ -71,6 +98,8 @@ export default {
 
       const comision = await CommissionService.getFullCommissionByCurrency(this.factura.moneda);
 
+      const monedaSimbolo = this.factura.moneda === 'PEN' ? 'S/.' : '$';
+
       Swal.fire({
         title: 'Confirmación de Tasa',
         html: `
@@ -79,11 +108,12 @@ export default {
           <p><strong>Fecha de Inicio:</strong> ${this.formatDateTime(tasa.fechaInicio)}</p>
           <p><strong>Fecha de Fin:</strong> ${this.formatDateTime(tasa.fechaFin)}</p>
           <p><strong>Comision </strong></p>
-          <p><strong>Estudio Riesgo: </strong> S/.${this.formatNumber(comision.estudioRiesgo)}</p>
+          <p><strong>Estudio Riesgo: </strong> ${monedaSimbolo}${this.formatNumber(comision.estudioRiesgo)}</p>
           <p><strong>Seguro de Degravamen: </strong> ${this.formatInterestRate(comision.seguroDesgravamen)}%</p>
-          <p><strong>Foto copias: </strong>  S/.${this.formatNumber(comision.fotoCopias)}</p>
-          <p><strong>Gastos administrativos: </strong> S/.${this.formatNumber(comision.gastoAdministracion)}</p>
-          <p><strong>Portes: </strong> S/.${this.formatNumber(comision.porte)}</p>
+          <p><strong>Foto copias: </strong>  ${monedaSimbolo}${this.formatNumber(comision.fotoCopias)}</p>
+          <p><strong>Gastos administrativos: </strong> ${monedaSimbolo}${this.formatNumber(comision.gastoAdministracion)}</p>
+          <p><strong>Portes: </strong> ${monedaSimbolo}${this.formatNumber(comision.porte)}</p>
+          <p><strong>Moneda: </strong>${this.factura.moneda}</p>
           <p>¿Desea continuar?</p>
         `,
         icon: 'question',
@@ -122,6 +152,9 @@ export default {
       });
     },
   },
+  async mounted(){
+    await this.getClients();
+  }
 }
 </script>
 

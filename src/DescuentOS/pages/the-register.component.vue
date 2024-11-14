@@ -1,5 +1,6 @@
 <script>
 import UserService from '@/DescuentOS/services/user.service.js'
+import Swal from "sweetalert2";
 
 export default {
   name: 'the-register.component',
@@ -20,6 +21,19 @@ export default {
   methods: {
     async registrarUsuario()
     {
+
+      console.log("Contraseña: ",  this.usuario.contrasena);
+      console.log("Confirmar contraseña: ",  this.usuario.confirmar_contrasena);
+
+      if (this.usuario.contrasena !== this.usuario.confirmar_contrasena) {
+        await Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Las contraseñas no coinciden.',
+        });
+        return;
+      }
+
       const user = {
         apellido: this.usuario.apellido,
         dni: this.usuario.documento_identidad,
@@ -86,7 +100,7 @@ export default {
           </div>
           <div class="form-group">
             <label for="confirmPassword">Confirmar contraseña</label>
-            <pv-input-text type="password" id="confirmPassword" v-model="usuario.confirmPassword" required />
+            <pv-input-text type="password" id="confirmPassword" v-model="usuario.confirmar_contrasena" required />
           </div>
           <pv-button type="submit" class="btn">Registrarse</pv-button>
         </form>

@@ -20,6 +20,16 @@ class FactoringOperationService {
     });
     return response.data;
   }
+
+  async validateBillwithFactoringOperation(id) {
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}quma/operacionfactoring/usuario/verificar/${id}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    return response.data;
+  }
 }
 
 export default new FactoringOperationService();

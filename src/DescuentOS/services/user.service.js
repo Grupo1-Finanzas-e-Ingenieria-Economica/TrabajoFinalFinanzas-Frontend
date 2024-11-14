@@ -19,6 +19,16 @@ class UserService {
     });
     return response.data.ruc;
   }
+
+  async getUserDataByUserName(username) {
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}quma/cliente/usuario/id/${username}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    return `${response.data.nombre + " " + response.data.apellido}`;
+  }
 }
 
 export default new UserService();

@@ -53,7 +53,7 @@ export default {
         <form @submit.prevent="registrarUsuario">
           <div class="form-group">
             <label for="documento">RUC</label>
-            <pv-input-text type="number" id="documento" v-model="usuario.ruc" required />
+            <pv-input-text type="text" id="documento" v-model="usuario.ruc" required />
           </div>
           <div class="form-group">
             <label for="nombre">Nombre Empresa</label>

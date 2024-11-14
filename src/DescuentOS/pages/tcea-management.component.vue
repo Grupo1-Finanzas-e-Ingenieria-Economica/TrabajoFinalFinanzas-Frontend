@@ -59,11 +59,31 @@ export default {
           <div class="table-container">
             <div class="table-row table-header">
               <div>TCEA</div>
+              <div>Cantidad Operaciones</div>
+              <div>Montos Nominales</div>
+              <div>Montos Descontados</div>
+              <div>Montos Recibidos</div>
+              <div>Moneda</div>
               <div>Fecha</div>
             </div>
             <div v-for="(tcea, index) in slotProps.items" :key="index" class="table-row">
               <div class="table-cell">
                 <span class="cell-label">TCEA: </span> {{ formatInterestRate(tcea.tcea) }}%
+              </div>
+              <div class="table-cell">
+                <span class="cell-label">Cantidad Operaciones: </span> {{tcea.cantidadOperaciones}}
+              </div>
+              <div class="table-cell">
+                <span class="cell-label">Montos Nominales: </span> {{tcea.montosNominales}}
+              </div>
+              <div class="table-cell">
+                <span class="cell-label">Montos Descontados: </span> {{tcea.montosDescontados}}
+              </div>
+              <div class="table-cell">
+                <span class="cell-label">Montos Recibidos: </span> {{tcea.montosRecibidos}}
+              </div>
+              <div class="table-cell">
+                <span class="cell-label">Moneda: </span> {{tcea.moneda}}
               </div>
               <div class="table-cell">
                 <span class="cell-label">Fecha: </span> {{ formatDateTime(tcea.fecha) }}
@@ -105,7 +125,7 @@ h1 {
 
 .table-row {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(7, 1fr);
   gap: 0.5rem;
   padding: 0.5rem;
   border-bottom: 1px solid #e0e0e0;

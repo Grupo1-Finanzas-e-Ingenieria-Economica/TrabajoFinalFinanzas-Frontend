@@ -32,7 +32,8 @@ export default {
     async fetchName() {
       const token = localStorage.getItem('token')
       const decoded = jwtDecode(token)
-      this.nombre_usuario = decoded.username
+
+      this.nombre_usuario = await UserService.getUserDataByUserName(decoded.username);
     },
     async fetchFacturasRecientes() {
       const token = localStorage.getItem('token')
