@@ -50,6 +50,51 @@ export default {
     <pv-card class="help-card">
       <template #header>
         <br>
+        <h2 class="card-title">Pagina principal</h2>
+      </template>
+      <template #content>
+        <p>
+          En el dashboard podrás observar las distintas funciones que ofrece la aplicación.
+        </p>
+        <div class="image-container">
+          <img src="../../assets/dashboard.png" alt="Dashboard">
+        </div>
+      </template>
+    </pv-card>
+
+    <pv-card class="help-card">
+      <template #header>
+        <br>
+        <h2 class="card-title">Clientes Deudores</h2>
+      </template>
+      <template #content>
+        <p>
+          En esta seccion podrás observar los clientes disponibles en la base de datos de Quma y podrás filtrarlos por nombre o ruc.
+        </p>
+        <div class="image-container">
+          <img src="../../assets/gestion-clientes.png" alt="Registro de factura">
+        </div>
+      </template>
+    </pv-card>
+
+    <pv-card class="help-card">
+      <template #header>
+        <br>
+        <h2 class="card-title">Facturas</h2>
+      </template>
+      <template #content>
+        <p>
+          Aqui podrás ver todas tus facturas y podrás filtrarlas por dólares o soles. Además, podrás registrar una nueva factura.
+        </p>
+        <div class="image-container">
+          <img src="../../assets/gestion-facturas.png" alt="Facturas">
+        </div>
+      </template>
+    </pv-card>
+
+    <pv-card class="help-card">
+      <template #header>
+        <br>
         <h2 class="card-title">Registro de Facturas</h2>
       </template>
       <template #content>
@@ -72,14 +117,14 @@ export default {
       </template>
       <template #content>
         <p>
-          Una vez que hayas registrado una factura y aceptado las comisiones, se te redirigirá a la sección de operaciones de factoring donde podrás ver un resumen de toda la operación con la factura y TCEA creada.
+          Una vez que hayas registrado una factura y aceptado las comisiones, se te redirigirá a la sección de operaciones de factoring donde podrás ver un resumen de toda la operación con la factura y TCEA creada. También podrás filtrarlas por dólares o soles
         </p>
         <div class="image-container">
           <img src="../../assets/gestion-operaciones.png" alt="Gestión de operaciones">
         </div>
         <br>
         <p>
-          En caso de no haber aceptado las comisiones, se te creará la factura pero no la operación. De todas formas, puedes crearla en cualquier momento presionando el botón de *Realizar Operación*.
+          En caso de no haber aceptado las comisiones, se te creará la factura pero no la operación. De todas formas, puedes crearla en cualquier momento presionando el botón de *Realizar Factoring*.
         </p>
         <div class="image-container">
           <img src="../../assets/factura-sinoperacion.jpg" alt="Factura sin operación">
@@ -94,7 +139,7 @@ export default {
       </template>
       <template #content>
         <p>
-          En la sección de cartera de TCEA, podrás ver la tasa interna de retorno de todas las TCEA generadas por operaciones de factoring en un día y por moneda.
+          En la sección de cartera de TCEA, podrás ver la tasa interna de retorno de todas las TCEA generadas por operaciones de factoring en un día y por moneda. También podrás filtrarlas por soles o dólares.
         </p>
         <div class="image-container">
           <img src="../../assets/gestion-tcea.png" alt="Gestión de TCEA">
@@ -177,5 +222,7 @@ export default {
 
 p {
   text-align: center;
+  font-weight: bold;
+
 }
 </style>

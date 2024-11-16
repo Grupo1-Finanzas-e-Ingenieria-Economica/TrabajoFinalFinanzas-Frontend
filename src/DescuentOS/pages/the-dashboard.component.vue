@@ -20,9 +20,6 @@ export default {
     goToHelp() {
       this.$router.push('/about-app')
     },
-    goToContact() {
-      this.$router.push('/contact')
-    },
     goToFacturas() {
       this.$router.push('/bill-management')
     },

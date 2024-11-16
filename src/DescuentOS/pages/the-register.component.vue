@@ -22,9 +22,6 @@ export default {
     async registrarUsuario()
     {
 
-      console.log("Contraseña: ",  this.usuario.contrasena);
-      console.log("Confirmar contraseña: ",  this.usuario.confirmar_contrasena);
-
       if (this.usuario.contrasena !== this.usuario.confirmar_contrasena) {
         await Swal.fire({
           icon: 'error',

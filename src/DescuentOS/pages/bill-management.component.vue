@@ -14,10 +14,24 @@ export default {
   data() {
     return {
       facturas: [],
-      factoringValidation:{}
+      factoringValidation:{},
+      filteredBillList: [],
+      showSoles: true,
+      showDolares: true,
     }
   },
   methods: {
+
+    filterBill() {
+      if (this.showSoles && this.showDolares || !this.showSoles && !this.showDolares) {
+        this.filteredBillList = this.facturas;
+      } else if (this.showSoles) {
+        this.filteredBillList = this.facturas.filter(factura => factura.moneda === 'PEN');
+      } else if (this.showDolares) {
+        this.filteredBillList = this.facturas.filter(factura => factura.moneda === 'USD');
+      }
+    },
+
     registrarNuevaFactura() {
       this.$router.push('/register-bill')
     },
@@ -26,8 +40,6 @@ export default {
       const decoded = jwtDecode(token)
       const username = decoded.username
 
-      console.log('Id del usuario: ' + username)
-
       const rucUser = await UserService.getUserRUC(username)
 
       this.facturas = await BillService.getBillBySupplierRUC(rucUser)
@@ -35,7 +47,7 @@ export default {
       for (const factura of this.facturas) {
         this.factoringValidation[factura.id] = await this.isFactoring(factura.id)
       }
-      console.log(this.facturas)
+      this.filterBill();
     },
 
     formatNumber(value) {
@@ -102,8 +114,6 @@ export default {
             idTasaEfectiva: tasa.id,
           };
 
-          console.log('Discount: ', discount);
-
           const discountId = await DiscountService.postDiscount(discount);
 
           const factoring = {
@@ -111,11 +121,7 @@ export default {
             idFactura: id
           };
 
-          console.log('Factoring: ', factoring);
-
           const operacion_factoring = await FactoringOperationService.postFactoringOperation(factoring);
-
-          console.log("Response: ", operacion_factoring.data);
 
           this.$router.push('/factoring-management');
         } else {
@@ -127,6 +133,14 @@ export default {
   async mounted() {
     await this.fetchFacturas()
   },
+  watch: {
+    showSoles() {
+      this.filterBill()
+    },
+    showDolares() {
+      this.filterBill()
+    }
+  }
 }
 </script>
 
@@ -143,8 +157,17 @@ export default {
       </pv-button>
     </div>
 
+    <div class="filter-container">
+      <div class="checkbox-group">
+        <pv-checkbox v-model="showSoles" binary />
+        <label for="soles">Soles</label>
+        <pv-checkbox v-model="showDolares" binary />
+        <label for="dolares">Dólares</label>
+      </div>
+    </div>
+
     <div class="facturas-table">
-      <pv-data-view :value="facturas">
+      <pv-data-view :value="filteredBillList">
         <template #list="slotProps">
           <div class="table-container">
             <div class="table-row table-header">
@@ -206,6 +229,22 @@ export default {
 </template>
 
 <style scoped>
+
+.filter-container {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.checkbox-group label {
+  margin-left: 0.5rem;
+}
+
 .facturas-container {
   padding: 1rem;
 }

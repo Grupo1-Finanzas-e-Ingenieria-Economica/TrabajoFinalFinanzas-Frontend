@@ -27,8 +27,6 @@ export default {
 
         localStorage.setItem('token', response.data.token);
 
-        console.log("Token guardado: " + localStorage.getItem('token'));
-
         if (response.data.token) {
           this.$router.push('/dashboard');
         }

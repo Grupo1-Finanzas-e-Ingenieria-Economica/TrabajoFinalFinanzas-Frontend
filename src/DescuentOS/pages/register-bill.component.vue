@@ -65,11 +65,7 @@ export default {
       const decoded = jwtDecode(token);
       const username = decoded.username;
 
-      console.log("Id del usuario: " + username);
-
       const rucUser = await UserService.getUserRUC(username);
-
-      console.log("RUC del usuario: " + rucUser);
 
       const nueva_factura = {
         numero: this.factura.numero,
@@ -84,20 +80,14 @@ export default {
 
       const facturaId = await BillService.postBill(nueva_factura);
 
-      console.log("Factura: ", facturaId.data);
-
       const tasa_efectiva = await EffectiveRateService.getEffectiveRate();
       const tasa = tasa_efectiva[0];
 
       const idComision = await CommissionService.getCommissionIdByCurrency(this.factura.moneda);
 
-      console.log("Id Comision: ", idComision);
-
       const comision = await CommissionService.getFullCommissionByCurrency(this.factura.moneda);
 
       const monedaSimbolo = this.factura.moneda === 'PEN' ? 'S/.' : '$';
-
-      console.log("Nueva factura: ", nueva_factura);
 
       Swal.fire({
         title: 'Confirmación de Tasa',
@@ -130,8 +120,6 @@ export default {
             idTasaEfectiva: tasa.id,
           };
 
-          console.log('Discount: ', discount);
-
           const discountId = await DiscountService.postDiscount(discount);
 
           const factoring = {
@@ -139,12 +127,7 @@ export default {
             idFactura: facturaId.data
           };
 
-          console.log('Factoring: ', factoring);
-
-          const operacion_factoring = await FactoringOperationService.postFactoringOperation(factoring);
-
-          console.log("Response: ", operacion_factoring.data);
-
+          await FactoringOperationService.postFactoringOperation(factoring);
           this.$router.push('/factoring-management');
         } else {
           this.$router.push('/bill-management');

@@ -27,15 +27,11 @@ export default {
         correoEmpresa: this.usuario.correo_empresarial,
         fechaRegistro: this.usuario.fecha_registro.toISOString().split('T')[0],
         idUsuario: parseInt(localStorage.getItem('userId'))
-      }
-
-      console.log("User: " + user.idUsuario);
+      };
 
       const response = await UserSupplierService.registerUserSupplier(user);
 
       localStorage.setItem('userId', '');
-
-      console.log(response.data);
       this.$router.push('/dashboard');
     }
   },

@@ -6,11 +6,8 @@ import BillManagementComponent from '@/DescuentOS/pages/bill-management.componen
 import RegisterBillComponent from '@/DescuentOS/pages/register-bill.component.vue'
 import ClientsManagementComponent from '@/DescuentOS/pages/clients-management.component.vue'
 import TceaManagementComponent from '@/DescuentOS/pages/tcea-management.component.vue'
-import TheOperationsComponent from '@/DescuentOS/pages/the-operations.component.vue'
-import CommisionManagementComponent from '@/DescuentOS/pages/commision-management.component.vue'
 import FactoringManagementComponent from '@/DescuentOS/pages/factoring-management.component.vue'
 import RegisterSupplierComponent from '@/DescuentOS/pages/register-supplier.component.vue'
-import PickRateComponent from '@/DescuentOS/pages/pick-rate.component.vue'
 import AboutTheAppComponent from "@/DescuentOS/pages/about-the-app.component.vue";
 
 const router = createRouter({
@@ -63,24 +60,9 @@ const router = createRouter({
       component: TceaManagementComponent
     },
     {
-      path: '/commision-management',
-      name: 'commision-management',
-      component: CommisionManagementComponent
-    },
-    {
       path: '/factoring-management',
       name: 'factoring-management',
       component: FactoringManagementComponent
-    },
-    {
-      path: '/operations',
-      name: 'operations',
-      component: TheOperationsComponent
-    },
-    {
-      path: '/pick-rate',
-      name: 'pick-rate',
-      component: PickRateComponent
     },
     {
       path: '/about-app',
