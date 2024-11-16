@@ -17,6 +17,12 @@ export default {
     }
   },
   methods: {
+    goToHelp() {
+      this.$router.push('/about-app')
+    },
+    goToContact() {
+      this.$router.push('/contact')
+    },
     goToFacturas() {
       this.$router.push('/bill-management')
     },
@@ -220,9 +226,49 @@ export default {
       >
     </pv-dialog>
   </div>
+
+  <footer class="footer">
+    <div class="footer-section">
+      <h1>¿Necesitas Ayuda?</h1>
+      <pv-button @click="goToHelp" class="footer-link">Ir a Ayuda</pv-button>
+    </div>
+    <div class="footer-section-2">
+      <h1>¿Tienes alguna consulta?</h1>
+      <p>Correo: soporte.quma@gmail.com</p>
+      <p>Teléfono: (01) 257385</p>
+      <p>WhatsApp: +51 957395827</p>
+    </div>
+  </footer>
 </template>
 
 <style scoped>
+.footer {
+  margin-top: auto;
+  padding: 20px 0;
+  background-color: #4caf50;
+  text-align: center;
+  color: white;
+  display: flex;
+  justify-content: space-around;
+}
+
+.footer-section {
+  margin: 0 20px;
+}
+
+.footer-section-2 {
+  margin: 0 20px;
+}
+
+.footer-link {
+  margin-top: 10px;
+  font-size: 1.2rem;
+  color: white;
+}
+
+.footer-link:hover {
+  text-decoration: underline;
+}
 
 .welcome-container {
   display: flex;

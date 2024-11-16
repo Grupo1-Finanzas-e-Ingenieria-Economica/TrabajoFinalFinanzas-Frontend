@@ -8,12 +8,10 @@ export default {
   data() {
     return {
       tceaList: [],
+      filteredTceaList: [],
       mostrarModal: false,
-      nuevaTCEA: {
-        tcea: "",
-        fecha: "",
-        rucCliente: "",
-      },
+      showSoles: true,
+      showDolares: true,
     };
   },
   methods: {
@@ -29,19 +27,40 @@ export default {
       const rucUser = await UserService.getUserRUC(username);
 
       this.tceaList = await OperationTceaService.getTceaWalletBySupplierRUC(rucUser);
+      this.filterTCEA();
     },
-    formatDateTime(dateTime){
+
+    filterTCEA() {
+      if (this.showSoles && this.showDolares || !this.showSoles && !this.showDolares) {
+        this.filteredTceaList = this.tceaList;
+      } else if (this.showSoles) {
+        this.filteredTceaList = this.tceaList.filter(tcea => tcea.moneda === 'PEN');
+      } else if (this.showDolares) {
+        this.filteredTceaList = this.tceaList.filter(tcea => tcea.moneda === 'USD');
+      }
+    },
+
+    formatDateTime(dateTime) {
       const date = new Date(dateTime);
       const formattedDate = date.toLocaleDateString();
       const formattedTime = date.toLocaleTimeString();
       return `${formattedDate} ${formattedTime}`;
     },
+
     returnToDashboard() {
       this.$router.push('/dashboard');
     }
   },
   async mounted() {
     await this.fetchTCEA();
+  },
+  watch: {
+    showSoles() {
+      this.filterTCEA();
+    },
+    showDolares() {
+      this.filterTCEA();
+    }
   }
 }
 </script>
@@ -53,8 +72,18 @@ export default {
     <pv-button @click="returnToDashboard" class="return-button">
       Volver al dashboard
     </pv-button>
+
+    <div class="filter-container">
+      <div class="checkbox-group">
+        <pv-checkbox v-model="showSoles" binary />
+        <label for="soles">Soles</label>
+        <pv-checkbox v-model="showDolares" binary />
+        <label for="dolares">Dólares</label>
+      </div>
+    </div>
+
     <div class="wallet-table">
-      <pv-data-view :value="tceaList">
+      <pv-data-view :value="filteredTceaList">
         <template #list="slotProps">
           <div class="table-container">
             <div class="table-row table-header">
@@ -102,6 +131,21 @@ export default {
   background-color: #f9f9f9;
 }
 
+.filter-container {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.checkbox-group label {
+  margin-left: 0.5rem;
+}
+
 h1 {
   text-align: center;
   margin-bottom: 20px;
@@ -116,7 +160,6 @@ h1 {
   display: flex;
   flex-direction: column;
 }
-
 
 .table-header {
   font-weight: bold;
@@ -148,8 +191,8 @@ h1 {
   font-size: 1rem;
 }
 
-@media (max-width: 768px) {
 
+@media (max-width: 768px) {
   .table-header {
     display: none;
   }

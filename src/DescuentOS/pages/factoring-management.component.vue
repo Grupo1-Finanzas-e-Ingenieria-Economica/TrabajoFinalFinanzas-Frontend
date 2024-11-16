@@ -10,10 +10,13 @@ export default {
   data() {
     return {
       operacionesList: [],
+      filteredOperacionesList: [],
       selectedBill: null,
       selectedTcea: null,
       showBillDialog: false,
       showTceaDialog: false,
+      showSoles: true,
+      showDolares: true,
     }
   },
   methods: {
@@ -28,8 +31,25 @@ export default {
 
       const rucUser = await UserService.getUserRUC(username)
 
-      this.operacionesList =
-        await FactoringOperationService.getFactoringOperationByRUC(rucUser)
+      const operaciones = await FactoringOperationService.getFactoringOperationByRUC(rucUser)
+      const facturas = await Promise.all(operaciones.map(op => BillService.getBillById(op.idFactura)))
+
+      this.operacionesList = operaciones.map(op => {
+        const factura = facturas.find(f => f.id === op.idFactura)
+        return {...op, moneda: factura.moneda}
+      })
+
+      this.filterOperaciones()
+    },
+
+    filterOperaciones() {
+      if (this.showSoles && this.showDolares || !this.showSoles && !this.showDolares) {
+        this.filteredOperacionesList = this.operacionesList
+      } else if (this.showSoles) {
+        this.filteredOperacionesList = this.operacionesList.filter(op => op.moneda === 'PEN')
+      } else if (this.showDolares) {
+        this.filteredOperacionesList = this.operacionesList.filter(op => op.moneda === 'USD')
+      }
     },
 
     async getBillById(id) {
@@ -60,6 +80,14 @@ export default {
   async mounted() {
     await this.fetchFactoring()
   },
+  watch: {
+    showSoles() {
+      this.filterOperaciones()
+    },
+    showDolares() {
+      this.filterOperaciones()
+    }
+  }
 }
 </script>
 
@@ -73,8 +101,17 @@ export default {
       </pv-button>
     </div>
 
+    <div class="filter-container">
+      <div class="checkbox-group">
+        <pv-checkbox v-model="showSoles" binary />
+        <label for="soles">Soles</label>
+        <pv-checkbox v-model="showDolares" binary />
+        <label for="dolares">Dólares</label>
+      </div>
+    </div>
+
     <div class="factoring-table">
-      <pv-data-view :value="operacionesList">
+      <pv-data-view :value="filteredOperacionesList">
         <template #list="slotProps">
           <div class="table-container">
             <div class="table-row table-header">
@@ -98,31 +135,31 @@ export default {
                 <span class="cell-label">Valor Nominal: </span>{{ formatNumber(factoring.valorNominal) }}
               </div>
               <div class="table-cell">
-                <span class="cell-label">Numero Dias: </span>{{factoring.numeroDias}}
+                <span class="cell-label">Numero Dias: </span>{{ factoring.numeroDias }}
               </div>
               <div class="table-cell">
-                <span class="cell-label">Tasa Aplicada: </span>{{formatInterestRate(factoring.tasaEfectivaAplicada)}}%
+                <span class="cell-label">Tasa Aplicada: </span>{{ formatInterestRate(factoring.tasaEfectivaAplicada) }}%
               </div>
               <div class="table-cell">
-                <span class="cell-label">Tasa Descuento: </span>{{formatInterestRate(factoring.tasaDescuento)}}%
+                <span class="cell-label">Tasa Descuento: </span>{{ formatInterestRate(factoring.tasaDescuento) }}%
               </div>
               <div class="table-cell">
-                <span class="cell-label">Descuento: </span>{{factoring.descuento}}
+                <span class="cell-label">Descuento: </span>{{ factoring.descuento }}
               </div>
               <div class="table-cell">
-                <span class="cell-label">Costes iniciales: </span>{{factoring.costesIniciales}}
+                <span class="cell-label">Costes iniciales: </span>{{ factoring.costesIniciales }}
               </div>
               <div class="table-cell">
-                <span class="cell-label">Costes finales: </span>{{factoring.costesFinales}}
+                <span class="cell-label">Costes finales: </span>{{ factoring.costesFinales }}
               </div>
               <div class="table-cell">
-                <span class="cell-label">Valor Neto: </span>{{factoring.valorNeto}}
+                <span class="cell-label">Valor Neto: </span>{{ factoring.valorNeto }}
               </div>
               <div class="table-cell">
-                <span class="cell-label">Valor Recibido: </span>{{factoring.valorRecibido}}
+                <span class="cell-label">Valor Recibido: </span>{{ factoring.valorRecibido }}
               </div>
               <div class="table-cell">
-                <span class="cell-label">Valor Entregado: </span>{{factoring.valorEntregado}}
+                <span class="cell-label">Valor Entregado: </span>{{ factoring.valorEntregado }}
               </div>
               <div>
                 <pv-button
@@ -153,12 +190,12 @@ export default {
           <strong>Número:</strong> {{ selectedBill.numero }}
         </div>
         <div class="detail-row">
-          <strong>Monto Total:</strong> S/.{{
+          <strong>Monto Total:</strong> {{
             formatNumber(selectedBill.montoTotal)
           }}
         </div>
         <div class="detail-row">
-          <strong>Monto Total (con IGV):</strong> S/.{{
+          <strong>Monto Total (con IGV):</strong> {{
             formatNumber(selectedBill.montoTotalIgv)
           }}
         </div>
@@ -204,6 +241,25 @@ export default {
 <style scoped>
 .gestion-factoring-container {
   padding: 1rem;
+}
+
+.filter-container {
+  margin-bottom: 1rem;
+}
+
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.checkbox-group label {
+  margin-left: 0.5rem;
+}
+
+.table-container {
+  display: flex;
+  flex-direction: column;
 }
 
 .factoring-table {
@@ -253,6 +309,7 @@ export default {
   margin-bottom: 20px;
 }
 
+
 .table-cell {
   padding: 0.5rem;
   display: flex;
@@ -269,9 +326,11 @@ export default {
   .table-row {
     grid-template-columns: repeat(2, 1fr);
   }
+
   .table-header {
     display: none;
   }
+
   .table-row div:nth-child(odd) {
     font-weight: bold;
   }

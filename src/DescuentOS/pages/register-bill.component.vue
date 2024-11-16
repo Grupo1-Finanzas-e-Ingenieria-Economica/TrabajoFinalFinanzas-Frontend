@@ -20,16 +20,20 @@ export default {
         fechaEmision: null,
         fechaVencimiento: null,
         rucClienteProveedor: '',
-        rucClienteDeudor: '',
       },
       deudores: [],
       monedas: ['PEN', 'USD'],
+      selectedDebtor: null,
     };
   },
   methods: {
 
     async getClients() {
-      this.deudores = await UserDebtorService.getDebtors();
+      const deudores = await UserDebtorService.getDebtors();
+      this.deudores = deudores.map(deudor => ({
+        label: deudor.nombreEmpresa,
+        value: deudor.ruc
+      }));
     },
 
     formatInterestRate(rate) {
@@ -48,22 +52,11 @@ export default {
     },
 
     async guardarFactura() {
-
-      if (!this.factura.numero || !this.factura.montoTotalIgv || !this.factura.fechaEmision || !this.factura.fechaVencimiento || !this.factura.rucClienteDeudor) {
+      if (!this.factura.numero || !this.factura.montoTotalIgv || !this.factura.fechaEmision || !this.factura.fechaVencimiento || !this.selectedDebtor) {
         Swal.fire({
           icon: 'error',
           title: 'Error',
           text: 'Todos los campos deben estar llenos.',
-        });
-        return;
-      }
-
-      const rucExists = this.deudores.some(deudor => deudor.ruc === this.factura.rucClienteDeudor);
-      if (!rucExists) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'El RUC del cliente deudor no existe.',
         });
         return;
       }
@@ -86,19 +79,25 @@ export default {
         fechaEmision: this.factura.fechaEmision,
         fechaVencimiento: this.factura.fechaVencimiento,
         rucClienteProveedor: rucUser,
-        rucClienteDeudor: this.factura.rucClienteDeudor,
+        rucClienteDeudor: this.selectedDebtor.value,
       };
 
       const facturaId = await BillService.postBill(nueva_factura);
+
+      console.log("Factura: ", facturaId.data);
 
       const tasa_efectiva = await EffectiveRateService.getEffectiveRate();
       const tasa = tasa_efectiva[0];
 
       const idComision = await CommissionService.getCommissionIdByCurrency(this.factura.moneda);
 
+      console.log("Id Comision: ", idComision);
+
       const comision = await CommissionService.getFullCommissionByCurrency(this.factura.moneda);
 
       const monedaSimbolo = this.factura.moneda === 'PEN' ? 'S/.' : '$';
+
+      console.log("Nueva factura: ", nueva_factura);
 
       Swal.fire({
         title: 'Confirmación de Tasa',
@@ -122,6 +121,7 @@ export default {
         cancelButtonText: 'No'
       }).then(async (result) => {
         if (result.isConfirmed) {
+
 
           const discount = {
             fecha: "",
@@ -189,7 +189,21 @@ export default {
 
       <div class="form-group">
         <label for="rucClienteProveedor">RUC Cliente</label>
-        <input type="text" id="rucClienteProveedor" v-model="factura.rucClienteDeudor" required />
+        <pv-select v-model="selectedDebtor" :options="deudores" filter optionLabel="label" placeholder="Seleccione una empresa" class="w-full md:w-56">
+          <template #value="slotProps">
+            <div v-if="slotProps.value" class="flex items-center">
+              <div>{{slotProps.value.label}}</div>
+            </div>
+            <span v-else>
+              {{slotProps.placeholder}}
+            </span>
+          </template>
+          <template #option="slotProps">
+            <div class="flex items-center">
+              <div>{{slotProps.option.label}}</div>
+            </div>
+          </template>
+        </pv-select>
       </div>
       <div class="form-group">
         <button type="submit" class="btn-guardar">CONFIRMAR</button>

@@ -11,6 +11,10 @@ export default {
     };
   },
   methods: {
+    goToHelp() {
+      this.$router.push('/about-app')
+    },
+
     async handleLogin() {
 
       try {
@@ -79,12 +83,37 @@ export default {
           <pv-button type="submit" @click="handleLogin" class="btn">Ingresar</pv-button>
           <pv-button type="button"  @click="goToRegister" class="btn btn-secondary">Registrarse</pv-button>
         </div>
+
+        <footer class="footer">
+          <div class="footer-section">
+            <h1 @click="goToHelp()" style="cursor: pointer">¿Tienes una consulta?</h1>
+          </div>
+        </footer>
+
       </div>
     </div>
   </div>
 </template>
 
 <style>
+.footer {
+  margin-top: auto;
+  padding: 20px 0;
+  background-color: #ffffff;
+  text-align: center;
+  color: #000000;
+  display: flex;
+  justify-content: space-around;
+}
+
+.footer-section {
+  margin: 0 20px;
+}
+
+.footer-section:hover {
+  text-decoration: underline;
+}
+
 .login-container {
   display: flex;
   justify-content: center;

@@ -21,6 +21,7 @@ import SelectButton from 'primevue/selectbutton'
 import Select from 'primevue/select'
 import DatePicker from 'primevue/datepicker'
 import Dialog from 'primevue/dialog';
+import Checkbox from "primevue/checkbox";
 import Aura from "@primevue/themes/aura";
 import "./resources/primevue-sass-theme-main/themes/aura/aura-light/green/theme.scss";
 
@@ -51,5 +52,6 @@ app.component('pv-select', Select)
 app.component('pv-date-picker', DatePicker)
 app.component('pv-order-list', OrderList)
 app.component('pv-dialog', Dialog)
+app.component('pv-checkbox', Checkbox)
 
 app.mount('#app')
